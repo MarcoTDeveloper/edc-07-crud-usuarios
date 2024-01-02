@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        --webkit-font-smoothing: antialiased;
+    }
+
+    html, body, input, textarea, button {
+        font-family: "Inter", sans-serif;
+        font-weight: 500;
+        font-size: 13px;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-weight: 600;
+        font-family: "Lexend", sans-serif;
+        cursor: default;
+        font-size: 13px;
+    }
+
+    @media (min-width: 1367px) {
+        html, body, input, textarea, button {
+            font-size: 16px;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-size: 16px;
+        }
+    }
+
+    #__next {
+        height: 100vh;
+        width: 100vw;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+@layer utilities {
+    .svg-stroke {
+        stroke-dasharray: 20;
+        stroke-dashoffset: var(--stroke-dashoffset, 20);
+        transition: stroke-dashoffset 0.2s;
+    }
+
+    .svg-stroke-active {
+        --stroke-dashoffset: 0;
+    }
+
+    .svg-stroke-props {
+        stroke-width: 1.25;
+        stroke-linecap: round;
+        stroke-dasharray: 4.5px;
+        stroke-dashoffset: 13.5px;
+    }
+}
+
+@keyframes check {
+    100% {
+        stroke-dashoffset: 4.5px;
+   }
+}
+
+/* fullcalendar */
+.fc-theme-standard .fc-scrollgrid {
+    @apply !border-gray-100 dark:!border-gray-700 rounded-md;
+}
+
+.fc-theme-standard td, .fc-theme-standard th {
+    @apply !border-gray-100 dark:!border-gray-700;
+}
+
+.fc-button-primary {
+    @apply !bg-zinc-200 dark:!bg-gray-500 hover:!bg-zinc-300 hover:dark:!bg-gray-800 !text-gray-700 dark:!text-gray-300 !border-none !font-semibold focus:!shadow-none;
+}
+
+.fc-today-button {
+    @apply !bg-primary-500 hover:!bg-primary-400 !text-white !font-semibold !rounded-md;
+}
+
+.fc-next-button {
+    @apply !text-primary-500 !rounded-r-md;
+}
+
+.fc-prev-button {
+    @apply !text-primary-500 !rounded-l-md;
+}
+
+.fc-dayGridWeek-button {
+    @apply !rounded-l-md !rounded-r-none;
+}
+
+.fc-dayGridMonth-button {
+    @apply !rounded-r-md !rounded-l-none;
+}
+
+.fc-button-active {
+    @apply !bg-primary-500 !text-white !font-semibold;
+}
+
+.fc-col-header-cell.fc-day-today a {
+    @apply !text-primary-500 !font-semibold;
+}
+
+.fc-daygrid-day.fc-day-today {
+    @apply !bg-gray-50 dark:!bg-gray-600;
+}
+
+.fc .fc-col-header-cell-cushion {
+    @apply !text-gray-500 dark:!text-gray-400 !text-sm !font-medium py-2;
+}
+/* fullcalendar */

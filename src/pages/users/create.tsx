@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FloppyDiskBack } from "@phosphor-icons/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -13,8 +13,6 @@ import { Select } from "@/components/ui/Select";
 import { CheckBox } from "@/components/ui/CheckBox";
 import { Hr } from "@/components/ui/Hr";
 import { Fetch } from "@/services/api";
-import { AuthContext } from "@/contexts/AuthContext";
-import { useFetch } from "@/hooks/useFetch";
 
 type CrudProps = {
     create: boolean;
@@ -36,8 +34,7 @@ type CreateUserFormData = {
 }
 
 export default function CreateUser() {
-    const { user } = useContext(AuthContext);
-    const { register, handleSubmit, formState, setValue, getValues } = useForm<CreateUserFormData>();
+    const { register, handleSubmit, formState, setValue, getValues, setError } = useForm<CreateUserFormData>();
     const [usersRead, setUsersRead] = useState<boolean>(false);
 
     useEffect(() => {
@@ -52,8 +49,11 @@ export default function CreateUser() {
         Fetch.post("/users/create", data).then(() => {
             toast.success("Usuário criado com sucesso!");
             Router.push("/users");
-        }).catch(() => {
+        }).catch((error) => {
             toast.error("Erro ao criar usuário!");
+            if (error.response.status == 409) {
+                setError("email", { type: "custom", message: "o e-mail informado já existe!" });
+            }
         });
     };
 

@@ -54,7 +54,7 @@ interface UpdateUserFormData extends User {
 
 export default function UpdateUser({ slug }: UpdateUserProps) {
     const { data } = useFetch<User>(`/users/${slug}`);
-    const { data: departments } = useFetch<Departments[]>("/departments");
+    // const { data: departments } = useFetch<Departments[]>("/departments");
     const { user } = useContext(AuthContext);
     const { register, handleSubmit, formState, setValue, getValues, watch } = useForm<UpdateUserFormData>();
     const [changePassword, setChangePassword] = useState<boolean>(false);
@@ -153,7 +153,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     />
                                 </div>
                                 <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-                                    <Select
+                                    {/* <Select
                                         label="Departamento"
                                         id="position"
                                         className="mb-4"
@@ -167,7 +167,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                         {departments?.map(department => (
                                             <option key={department.id} value={department.id}>{department.description}</option>
                                         ))}
-                                    </Select>
+                                    </Select> */}
                                     <Select
                                         label="Status"
                                         id="status"
@@ -225,126 +225,6 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     label="Configurações"
                                     className="mb-2"
                                     {...register("permissions.config.update")}
-                                />
-                                <Hr className="my-4" />
-                                <CheckBox
-                                    id="customerServiceRead"
-                                    label="Atendimento"
-                                    className="mb-2"
-                                    {...register("permissions.customerService.read", {
-                                        onChange: (e) => handleUpdateCustomerServiceRead(e.target.checked)
-                                    })}
-                                />
-                                <CheckBox
-                                    id="customerServiceCreate"
-                                    label="Criar Atendimento"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.customerService.create")}
-                                    disabled={!customerServiceRead}
-                                />
-                                <CheckBox
-                                    id="customerServiceUpdate"
-                                    label="Editar Atendimento"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.customerService.update")}
-                                    disabled={!customerServiceRead}
-                                />
-                                <CheckBox
-                                    id="customerServiceDelete"
-                                    label="Excluir Atendimento"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.customerService.delete")}
-                                    disabled={!customerServiceRead}
-                                />
-                                <Hr className="my-4" />
-                                <CheckBox
-                                    id="campaignsRead"
-                                    label="Campanhas"
-                                    className="mb-2"
-                                    {...register("permissions.campaigns.read", {
-                                        onChange: (e) => handleUpdateCampaignsRead(e.target.checked)
-                                    })}
-                                />
-                                <CheckBox
-                                    id="campaignsCreate"
-                                    label="Criar Campanhas"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.campaigns.create")}
-                                    disabled={!campaignsRead}
-                                />
-                                <CheckBox
-                                    id="campaignsUpdate"
-                                    label="Editar Campanhas"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.campaigns.update")}
-                                    disabled={!campaignsRead}
-                                />
-                                <CheckBox
-                                    id="campaignsDelete"
-                                    label="Excluir Campanhas"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.campaigns.delete")}
-                                    disabled={!campaignsRead}
-                                />
-                                <Hr className="my-4" />
-                                <CheckBox
-                                    id="contactsRead"
-                                    label="Contatos"
-                                    className="mb-2"
-                                    {...register("permissions.contacts.read", {
-                                        onChange: (e) => handleUpdateContactsRead(e.target.checked)
-                                    })}
-                                />
-                                <CheckBox
-                                    id="contactsCreate"
-                                    label="Criar Contatos"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.contacts.create")}
-                                    disabled={!contactsRead}
-                                />
-                                <CheckBox
-                                    id="contactsUpdate"
-                                    label="Editar Contatos"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.contacts.update")}
-                                    disabled={!contactsRead}
-                                />
-                                <CheckBox
-                                    id="contactsDelete"
-                                    label="Excluir Contatos"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.contacts.delete")}
-                                    disabled={!contactsRead}
-                                />
-                                <Hr className="my-4" />
-                                <CheckBox
-                                    id="departmentsRead"
-                                    label="Departamentos"
-                                    className="mb-2"
-                                    {...register("permissions.departments.read", {
-                                        onChange: (e) => handleUpdateDepartmentsRead(e.target.checked)
-                                    })}
-                                />
-                                <CheckBox
-                                    id="departmentsCreate"
-                                    label="Criar Departamentos"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.departments.create")}
-                                    disabled={!departmentsRead}
-                                />
-                                <CheckBox
-                                    id="departmentsUpdate"
-                                    label="Editar Departamentos"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.departments.update")}
-                                    disabled={!departmentsRead}
-                                />
-                                <CheckBox
-                                    id="departmentsDelete"
-                                    label="Excluir Departamentos"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.departments.delete")}
-                                    disabled={!departmentsRead}
                                 />
                                 <Hr className="my-4" />
                                 <CheckBox

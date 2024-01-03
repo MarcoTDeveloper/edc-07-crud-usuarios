@@ -68,7 +68,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
             setValue("email", data.email);
             setValue("position", data.position);
             setValue("status", data.status);
-            setValue("permissions.config.update", data.permissions.config.update);
+            // setValue("permissions.config.update", data.permissions.config.update);
             setValue("permissions.users.create", data.permissions.users.create);
             setValue("permissions.users.read", data.permissions.users.read);
             setValue("permissions.users.update", data.permissions.users.update);

@@ -15,7 +15,7 @@ export function DeleteUser({ slug, mutate }: DeleteUserProps) {
 
     const handleDeleteUser = ((slug: string) => {
         mutate(slug);
-        Fetch.delete(`users/delete/${slug}`).then(() => {
+        Fetch.delete(`users/${slug}`).then(() => {
             toast.success("Usuário excluído com sucesso!");
         }).catch(() => {
             toast.error("Ops! Não foi possível excluir o usuário. Tente novamente.");

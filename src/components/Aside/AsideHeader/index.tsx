@@ -31,7 +31,7 @@ export function AsideHeader() {
                     <Logo className="w-10 md:h-16" />
                 )}
                 <BrandName
-                    className={classNames("md:hidden md:max-w-0 -ml-4 mt-3 h-9 [transition:display_.2s_ease_0s,max-width_.2s_ease_0s,_opacity_.1s_ease_0s] group-hover/aside:block group-hover/aside:max-w-xs group-hover/aside:opacity-100", {
+                    className={classNames("md:hidden md:max-w-0 mt-3 h-9 [transition:display_.2s_ease_0s,max-width_.2s_ease_0s,_opacity_.1s_ease_0s] group-hover/aside:block group-hover/aside:max-w-xs group-hover/aside:opacity-100 ml-4", {
                         "!block !max-w-xs !opacity-100": fixedAside,
                     })}
                 />

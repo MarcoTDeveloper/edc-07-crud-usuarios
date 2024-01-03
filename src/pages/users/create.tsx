@@ -197,6 +197,38 @@ export default function CreateUser() {
                                     {...register("permissions.users.delete")}
                                     disabled={!usersRead}
                                 />
+
+                                <Hr className="my-4" />
+
+                                <CheckBox
+                                    id="productRead"
+                                    label="Produtos"
+                                    className="mb-2"
+                                    {...register("permissions.users.read", {
+                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    })}
+                                />
+                                <CheckBox
+                                    id="productCreate"
+                                    label="Criar produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.create")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="productUpdate"
+                                    label="Editar produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.update")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="productDelete"
+                                    label="Excluir produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.delete")}
+                                    disabled={!usersRead}
+                                />
                             </div>
                         </Card>
                     </div>

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ChatsCircle, Handbag, House, Megaphone, Plus, SignOut, UserList, UsersFour, UsersThree } from "@phosphor-icons/react";
+import { ChatsCircle, Coins, Handbag, House, Megaphone, Package, Plus, SignOut, UserList, UsersFour, UsersThree } from "@phosphor-icons/react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { DashContext } from "@/contexts/DashContext";
@@ -24,36 +24,12 @@ export function AsideMain() {
                     onClick={() => setShowAside(false)}
                 />
             )}
-            {user?.permissions.includes("customerService.read") && (
-                <AsideLink
-                    href="/chats"
-                    icon={<ChatsCircle size={25} />}
-                    text="Atendimento"
-                    onClick={() => setShowAside(false)}
-                />
-            )}
             {(user?.permissions.includes("contacts.read") || user?.permissions.includes("users.read") || user?.permissions.includes("departments.read")) && (
                 <AsideButtonCollapse
                     ariaLabel="Botão que abre o menu de cadastros"
                     icon={<Plus size={25} />}
                     title="Cadastros"
                 >
-                    {user?.permissions.includes("contacts.read") && (
-                        <AsideLink
-                            href="/contacts"
-                            icon={<UsersThree size={25} />}
-                            text="Contatos"
-                            onClick={() => setShowAside(false)}
-                        />
-                    )}
-                    {user?.permissions.includes("departments.read") && (
-                        <AsideLink
-                            href="/departments"
-                            icon={<UsersFour size={25} />}
-                            text="Departamentos"
-                            onClick={() => setShowAside(false)}
-                        />
-                    )}
                     {user?.permissions.includes("users.read") && (
                         <AsideLink
                             href="/users"
@@ -62,7 +38,7 @@ export function AsideMain() {
                             onClick={() => setShowAside(false)}
                         />
                     )}
-                    {user?.permissions.includes("users.read") && (
+                    {user?.permissions.includes("products.read") && (
                         <AsideLink
                             href="/products"
                             icon={<Handbag size={25} />}
@@ -70,14 +46,23 @@ export function AsideMain() {
                             onClick={() => setShowAside(false)}
                         />
                     )}
+                    {user?.permissions.includes("orders.read") && (
+                        <AsideLink
+                            href="/orders"
+                            icon={<Package size={25} />}
+                            text="Pedidos"
+                            onClick={() => setShowAside(false)}
+                        />
+                    )}
+                    {user?.permissions.includes("sales.read") && (
+                        <AsideLink
+                            href="/sales"
+                            icon={<Coins size={25} />}
+                            text="Vendas"
+                            onClick={() => setShowAside(false)}
+                        />
+                    )}
                 </AsideButtonCollapse>
-            )}
-            {user?.permissions.includes("campaigns.read") && (
-                <AsideLink
-                    href="/campaigns"
-                    icon={<Megaphone size={25} />}
-                    text="Campanhas"
-                />
             )}
             <Support />
             <AsideButton

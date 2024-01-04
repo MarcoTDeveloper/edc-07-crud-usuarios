@@ -5,65 +5,55 @@ import { Eye } from "@phosphor-icons/react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
-import { DeleteUser } from "./Delete";
+import { DeleteProduct } from "./Delete";
 import { Loading } from "../ui/Loading";
 import { Table } from "../ui/Table";
 import { NoData } from "../ui/NoData";
 
-export type Users = {
+export type Products = {
     id: number;
     name: string;
-    position: string;
+    price: number;
     slug: string;
-    status: boolean;
 }
 
 export function ProductsList() {
-    const { data, mutate, isLoading } = useFetch<Users[]>("/users");
+    const { data, mutate, isLoading } = useFetch<Products[]>("/products");
     const { user } = useContext(AuthContext);
 
-    const onDeleteUser = useCallback((slug: string) => {
-        const updateUsersData = data?.filter(user => user.slug !== slug);
-        mutate(updateUsersData, false);
+    const onDeleteProduct = useCallback((slug: string) => {
+        const updateProductsData = data?.filter(product => product.slug !== slug);
+        mutate(updateProductsData, false);
     }, [data, mutate]);
 
-    const columnHelper = createColumnHelper<Users>();
+    const columnHelper = createColumnHelper<Products>();
     const columns = [
-        columnHelper.accessor("status", {
-            header: "Status",
+        columnHelper.accessor("price", {
+            header: "Price",
             size: 10,
-            cell: info => (
-                <div className="flex items-center justify-center">
-                    {info.renderValue() ? "Ativo" : "Inativo"}
-                </div>
-            ),
-        }),
-        columnHelper.accessor("name", {
-            header: "Nome",
-        }),
-        columnHelper.accessor("position", {
-            header: "Departamento",
-            size: 25,
             cell: info => (
                 <div className="flex items-center justify-center">
                     {info.renderValue()}
                 </div>
             ),
         }),
+        columnHelper.accessor("name", {
+            header: "Nome",
+        }),
         columnHelper.accessor("slug", {
             header: "",
             size: 10,
             cell: info => (
                 <div className="flex items-center gap-2 justify-center">
-                    {user?.permissions.includes("users.update") && (
-                        <Link href={`/users/${info.renderValue()}`}>
+                    {user?.permissions.includes("products.update") && (
+                        <Link href={`/products/${info.renderValue()}`}>
                             <Eye size={24} />
                         </Link>
                     )}
-                    {user?.permissions.includes("users.delete") && (
-                        <DeleteUser
+                    {user?.permissions.includes("products.delete") && (
+                        <DeleteProduct
                             slug={info.renderValue() as string}
-                            mutate={onDeleteUser}
+                            mutate={onDeleteProduct}
                         />
                     )}
                 </div>
@@ -74,7 +64,7 @@ export function ProductsList() {
     if (!data || isLoading) {
         return <Loading />;
     } else if (!data || data.length === 0) {
-        return <NoData message="Nenhum usuário encontrado!" />;
+        return <NoData message="Nenhum produto encontrado!" />;
     }
 
     return (

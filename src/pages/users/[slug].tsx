@@ -239,6 +239,113 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     {...register("permissions.users.delete")}
                                     disabled={!usersRead}
                                 />
+
+                                <Hr className="my-4" />
+
+                                <CheckBox
+                                    id="productRead"
+                                    label="Produtos"
+                                    className="mb-2"
+                                    {...register("permissions.users.read", {
+                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    })}
+                                />
+                                <CheckBox
+                                    id="productCreate"
+                                    label="Criar produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.create")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="productUpdate"
+                                    label="Editar produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.update")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="productDelete"
+                                    label="Excluir produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.delete")}
+                                    disabled={!usersRead}
+                                />
+
+                                <Hr className="my-4" />
+
+                                <CheckBox
+                                    id="orderRead"
+                                    label="Pedidos"
+                                    className="mb-2"
+                                    {...register("permissions.users.read", {
+                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    })}
+                                />
+                                <CheckBox
+                                    id="orderCreate"
+                                    label="Criar pedidos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.create")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="orderUpdate"
+                                    label="Editar pedidos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.update")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="orderDelete"
+                                    label="Excluir pedidos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.delete")}
+                                    disabled={!usersRead}
+                                />
+
+                                <Hr className="my-4" />
+
+                                <CheckBox
+                                    id="saleRead"
+                                    label="Vendas"
+                                    className="mb-2"
+                                    {...register("permissions.users.read", {
+                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    })}
+                                />
+                                <CheckBox
+                                    id="saleCreate"
+                                    label="Criar vendas"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.create")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="saleUpdate"
+                                    label="Editar vendas"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.update")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="saleDelete"
+                                    label="Excluir vendas"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.delete")}
+                                    disabled={!usersRead}
+                                />
+
+                                <Hr className="my-4" />
+
+                                <CheckBox
+                                    id="inventoryRead"
+                                    label="Ver estoque"
+                                    className="mb-2"
+                                    {...register("permissions.users.read", {
+                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    })}
+                                />
                             </div>
                         </Card>
                     </div>

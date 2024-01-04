@@ -5,7 +5,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { UsersList } from "@/components/Users/List";
+import { ProductsList } from "@/components/Products/List";
 
 export default function Users() {
     const { user } = useContext(AuthContext);
@@ -29,7 +29,7 @@ export default function Users() {
                 ]}
             />
 
-            <UsersList />
+            <ProductsList />
         </>
     );
 }

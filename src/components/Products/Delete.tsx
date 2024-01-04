@@ -5,20 +5,20 @@ import { toast } from "react-toastify";
 import { ConfirmModal } from "../ui/Modal/ConfirmModal";
 import { Fetch } from "../../services/api";
 
-type DeleteUserProps = {
+type DeleteProductProps = {
     slug: string;
     mutate: (slug: string) => void;
 }
 
-export function DeleteUser({ slug, mutate }: DeleteUserProps) {
+export function DeleteProduct({ slug, mutate }: DeleteProductProps) {
     const [openModal, setOpenModal] = useState(false);
 
     const handleDeleteUser = ((slug: string) => {
         mutate(slug);
-        Fetch.delete(`users/${slug}`).then(() => {
-            toast.success("Usuário excluído com sucesso!");
+        Fetch.delete(`products/${slug}`).then(() => {
+            toast.success("Produto excluído com sucesso!");
         }).catch(() => {
-            toast.error("Ops! Não foi possível excluir o usuário. Tente novamente.");
+            toast.error("Ops! Não foi possível excluir o produto. Tente novamente.");
         });
     });
 
@@ -33,8 +33,8 @@ export function DeleteUser({ slug, mutate }: DeleteUserProps) {
             <ConfirmModal
                 isOpen={openModal}
                 onClose={() => setOpenModal(false)}
-                title="Excluir usuário?"
-                message="Tem certeza que deseja excluir este usuário? Essa ação não poderá ser desfeita."
+                title="Excluir produto?"
+                message="Tem certeza que deseja excluir este produto? Essa ação não poderá ser desfeita."
                 type="error"
                 onConfirm={() => handleDeleteUser(slug)}
             />

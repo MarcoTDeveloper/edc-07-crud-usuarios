@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ChatsCircle, Coins, Handbag, House, Megaphone, Package, Plus, SignOut, UserList, UsersFour, UsersThree } from "@phosphor-icons/react";
+import { ChartLineUp, ChatsCircle, Coins, Handbag, House, Megaphone, Package, Plus, SignOut, UserList, UsersFour, UsersThree } from "@phosphor-icons/react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { DashContext } from "@/contexts/DashContext";
@@ -30,6 +30,7 @@ export function AsideMain() {
                     icon={<Plus size={25} />}
                     title="Cadastros"
                 >
+
                     {user?.permissions.includes("users.read") && (
                         <AsideLink
                             href="/users"
@@ -46,24 +47,33 @@ export function AsideMain() {
                             onClick={() => setShowAside(false)}
                         />
                     )}
-                    {user?.permissions.includes("orders.read") && (
-                        <AsideLink
-                            href="/orders"
-                            icon={<Package size={25} />}
-                            text="Pedidos"
-                            onClick={() => setShowAside(false)}
-                        />
-                    )}
-                    {user?.permissions.includes("sales.read") && (
-                        <AsideLink
-                            href="/sales"
-                            icon={<Coins size={25} />}
-                            text="Vendas"
-                            onClick={() => setShowAside(false)}
-                        />
-                    )}
                 </AsideButtonCollapse>
             )}
+            {user?.permissions.includes("orders.read") && (
+                <AsideLink
+                    href="/orders"
+                    icon={<Package size={25} />}
+                    text="Pedidos"
+                    onClick={() => setShowAside(false)}
+                />
+            )}
+            {user?.permissions.includes("sales.read") && (
+                <AsideLink
+                    href="/sales"
+                    icon={<Coins size={25} />}
+                    text="Vendas"
+                    onClick={() => setShowAside(false)}
+                />
+            )}
+            {user?.permissions.includes("inventory.read") && (
+                <AsideLink
+                    href="/inventory"
+                    icon={<ChartLineUp size={25} />}
+                    text="Estoque"
+                    onClick={() => setShowAside(false)}
+                />
+            )}
+
             <Support />
             <AsideButton
                 className="!text-danger-500 hover:!text-danger-600"

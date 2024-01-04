@@ -54,6 +54,7 @@ interface UpdateUserFormData extends User {
 
 export default function UpdateUser({ slug }: UpdateUserProps) {
     const { data } = useFetch<User>(`/users/${slug}`);
+    const { user } = useContext(AuthContext);
     const { register, handleSubmit, formState, setValue, getValues, watch } = useForm<UpdateUserFormData>();
     const [changePassword, setChangePassword] = useState<boolean>(false);
     const [usersRead, setUsersRead] = useState<boolean>(false);
@@ -151,6 +152,21 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     />
                                 </div>
                                 <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
+                                    {/* <Select
+                                        label="Departamento"
+                                        id="position"
+                                        className="mb-4"
+                                        {...register("position", {
+                                            required: "Campo obrigatório"
+                                        })}
+                                        required
+                                        error={formState.errors.position?.message}
+                                    >
+                                        <option value="">Selecione</option>
+                                        {departments?.map(department => (
+                                            <option key={department.id} value={department.id}>{department.description}</option>
+                                        ))}
+                                    </Select> */}
                                     <Select
                                         label="Status"
                                         id="status"

@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FloppyDiskBack } from "@phosphor-icons/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Router from "next/router";
-import { GetServerSideProps } from "next/types";
-import { getServerSession } from "next-auth/next";
 
 import { Button } from "@/components/ui/Button";
 import { Head } from "@/components/ui/Head";
@@ -14,16 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { CheckBox } from "@/components/ui/CheckBox";
 import { Hr } from "@/components/ui/Hr";
-import { Loading } from "@/components/ui/Loading";
-import { AuthContext, UserProps } from "@/contexts/AuthContext";
-import { useFetch } from "@/hooks/useFetch";
-import { Collapse } from "@/components/ui/Collapse";
 import { Fetch } from "@/services/api";
-import { authOptions } from "../api/auth/[...nextauth]";
-
-type UpdateUserProps = {
-    slug: string;
-}
 
 type CrudProps = {
     create: boolean;
@@ -32,79 +21,50 @@ type CrudProps = {
     delete: boolean;
 }
 
-type User = {
-    id: number;
+type CreateUserFormData = {
     name: string;
     email: string;
     position: string;
     status: string;
+    password: string;
+    passwordConfirmation: string;
     permissions: {
-        config: {
-            update: boolean;
-        };
         users: CrudProps;
     }
 }
 
-interface UpdateUserFormData extends User {
-    changePassword: boolean;
-    password: string;
-    passwordConfirmation: string;
-}
-
-export default function UpdateUser({ slug }: UpdateUserProps) {
-    const { data } = useFetch<User>(`/users/${slug}`);
-    const { register, handleSubmit, formState, setValue, getValues, watch } = useForm<UpdateUserFormData>();
-    const [changePassword, setChangePassword] = useState<boolean>(false);
+export default function CreateUser() {
+    const { register, handleSubmit, formState, setValue, getValues, setError } = useForm<CreateUserFormData>();
     const [usersRead, setUsersRead] = useState<boolean>(false);
-    const watchUserName = watch("name");
 
     useEffect(() => {
-        if (data) {
-            setValue("id", data.id);
-            setValue("name", data.name);
-            setValue("email", data.email);
-            setValue("position", data.position);
-            setValue("status", data.status);
-            // setValue("permissions.config.update", data.permissions.config.update);
-            setValue("permissions.users.create", data.permissions.users.create);
-            setValue("permissions.users.read", data.permissions.users.read);
-            setValue("permissions.users.update", data.permissions.users.update);
-            setValue("permissions.users.delete", data.permissions.users.delete);
-            setUsersRead(data.permissions.users.read);
-        }
-    }, [data, setValue]);
-
-    const handleUpdateUsersRead = (status: boolean) => {
-        setUsersRead(status);
-        if (!status) {
+        if (!usersRead) {
             setValue("permissions.users.create", false);
             setValue("permissions.users.update", false);
             setValue("permissions.users.delete", false);
         }
-    };
+    }, [usersRead, setValue]);
 
-    const handleUpdateUser: SubmitHandler<UpdateUserFormData> = async (data) => {
-        Fetch.post("/users/update", data).then(() => {
-            toast.success("Usuário atualizado com sucesso!");
+    const handleCreateUser: SubmitHandler<CreateUserFormData> = async (data) => {
+        Fetch.post("/users/create", data).then(() => {
+            toast.success("Usuário criado com sucesso!");
             Router.push("/users");
-        }).catch(() => {
-            toast.error("Erro ao atualizar usuário!");
+        }).catch((error) => {
+            toast.error("Erro ao criar usuário!");
+            if (error.response.status == 409) {
+                setError("email", { type: "custom", message: "o e-mail informado já existe!" });
+            }
         });
     };
 
-    if (!data) {
-        return <Loading />;
-    }
-
     return (
         <>
-            <Head title="Editar usuário" />
+            <Head title="Novo usuário" />
 
-            <form onSubmit={handleSubmit(handleUpdateUser)}>
+            <form onSubmit={handleSubmit(handleCreateUser)}>
                 <PageHeader
                     className="mb-4"
-                    title="Editar usuário"
+                    title="Novo usuário"
                     button={
                         <Button
                             type="submit"
@@ -118,7 +78,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                     }
                     breadcrumb={[
                         { title: "Usuários", href: "/users" },
-                        { title: watchUserName || "Editar Usuário" }
+                        { title: "Criar Usuário" }
                     ]}
                 />
 
@@ -150,7 +110,22 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                         error={formState.errors.email?.message}
                                     />
                                 </div>
-                                <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
+                                <div className="flex flex-col gap-4 md:grid md:grid-cols-4">
+                                    <Select
+                                        label="Departamento"
+                                        id="position"
+                                        className="mb-4"
+                                        {...register("position", {
+                                            required: "Campo obrigatório"
+                                        })}
+                                        required
+                                        error={formState.errors.position?.message}
+                                    >
+                                        <option value="">Selecione</option>
+                                        <option value="Desenvolvedor">Desenvolvedor</option>
+                                        <option value="Usuários">Usuários</option>
+                                        <option value="Suporte">Suporte</option>
+                                    </Select>
                                     <Select
                                         label="Status"
                                         id="status"
@@ -158,64 +133,47 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                         {...register("status", {
                                             required: "Campo obrigatório"
                                         })}
-                                        required
                                         error={formState.errors.status?.message}
                                     >
                                         <option value="">Selecione</option>
                                         <option value="true">Ativo</option>
                                         <option value="false">Inativo</option>
                                     </Select>
+                                    <Input
+                                        label="Senha"
+                                        id="password"
+                                        type="password"
+                                        className="mb-4 md:mb-0"
+                                        {...register("password", {
+                                            required: "Campo obrigatório"
+                                        })}
+                                        required
+                                        error={formState.errors.password?.message}
+                                    />
+                                    <Input
+                                        label="Confirmar Senha"
+                                        id="passwordConfirmation"
+                                        type="password"
+                                        {...register("passwordConfirmation", {
+                                            required: "Campo obrigatório",
+                                            validate: (value) => value === getValues("password") || "As senhas não conferem"
+                                        })}
+                                        required
+                                        error={formState.errors.passwordConfirmation?.message}
+                                    />
                                 </div>
-                                <CheckBox
-                                    id="changePassword"
-                                    label="Alterar senha"
-                                    {...register("changePassword", {
-                                        onChange: (e) => setChangePassword(e.target.checked)
-                                    })}
-                                />
                             </div>
-                            <Collapse isOpen={changePassword}>
-                                {changePassword && (
-                                    <div className="px-4 pb-4">
-                                        <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-                                            <Input
-                                                label="Senha"
-                                                id="password"
-                                                type="password"
-                                                className="mb-4 md:mb-0"
-                                                {...register("password")}
-                                            />
-                                            <Input
-                                                label="Confirmar Senha"
-                                                id="passwordConfirmation"
-                                                type="password"
-                                                {...register("passwordConfirmation", {
-                                                    validate: (value) => value === getValues("password") || "As senhas não conferem"
-                                                })}
-                                                error={formState.errors.passwordConfirmation?.message}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </Collapse>
                         </Card>
                     </div>
                     <div className="md:col-span-4">
                         <Card title="Funções do usuário">
                             <div className="p-4">
                                 <CheckBox
-                                    id="configUpdate"
-                                    label="Configurações"
-                                    className="mb-2"
-                                    {...register("permissions.config.update")}
-                                />
-                                <Hr className="my-4" />
-                                <CheckBox
                                     id="userRead"
                                     label="Usuários"
                                     className="mb-2"
                                     {...register("permissions.users.read", {
-                                        onChange: (e) => handleUpdateUsersRead(e.target.checked)
+                                        onChange: (e) => setUsersRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
@@ -239,6 +197,38 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     {...register("permissions.users.delete")}
                                     disabled={!usersRead}
                                 />
+
+                                <Hr className="my-4" />
+
+                                <CheckBox
+                                    id="productRead"
+                                    label="Produtos"
+                                    className="mb-2"
+                                    {...register("permissions.users.read", {
+                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    })}
+                                />
+                                <CheckBox
+                                    id="productCreate"
+                                    label="Criar produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.create")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="productUpdate"
+                                    label="Editar produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.update")}
+                                    disabled={!usersRead}
+                                />
+                                <CheckBox
+                                    id="productDelete"
+                                    label="Excluir produtos"
+                                    className="ml-5 mb-2"
+                                    {...register("permissions.users.delete")}
+                                    disabled={!usersRead}
+                                />
                             </div>
                         </Card>
                     </div>
@@ -247,33 +237,3 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
         </>
     );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const session = await getServerSession(context.req, context.res, authOptions);
-    const { slug } = context.params as { slug: string };
-
-    if (!session) {
-        return {
-            redirect: {
-                destination: "/",
-                permanent: false
-            }
-        };
-    } else {
-        const { user } = session?.user as { user: UserProps };
-        if (!user.permissions.includes("users.update")) {
-            return {
-                redirect: {
-                    destination: "/users",
-                    permanent: false
-                }
-            };
-        }
-
-        return {
-            props: {
-                slug
-            }
-        };
-    }
-};

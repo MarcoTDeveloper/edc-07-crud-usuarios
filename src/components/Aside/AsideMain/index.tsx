@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ChatsCircle, House, Megaphone, Plus, SignOut, UserList, UsersFour, UsersThree } from "@phosphor-icons/react";
+import { ChatsCircle, Handbag, House, Megaphone, Plus, SignOut, UserList, UsersFour, UsersThree } from "@phosphor-icons/react";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { DashContext } from "@/contexts/DashContext";
@@ -59,6 +59,14 @@ export function AsideMain() {
                             href="/users"
                             icon={<UserList size={25} />}
                             text="Usuários"
+                            onClick={() => setShowAside(false)}
+                        />
+                    )}
+                    {user?.permissions.includes("users.read") && (
+                        <AsideLink
+                            href="/products"
+                            icon={<Handbag size={25} />}
+                            text="Produtos"
                             onClick={() => setShowAside(false)}
                         />
                     )}

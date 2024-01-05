@@ -18,11 +18,11 @@ export default function Users() {
         className="mb-4"
         title="Pedidos"
         button={user?.permissions.includes("orders.create") && (<LinkButton
-          href="/products/create"
+          href="/orders/create"
           variant="secondary"
           icon={<Plus size={24} />}
         >
-          Novo pedidos
+          Novo pedido
         </LinkButton>)}
         breadcrumb={[
           { title: "Pedidos" },

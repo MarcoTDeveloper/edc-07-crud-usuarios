@@ -22,7 +22,7 @@ export default function Users() {
           variant="secondary"
           icon={<Plus size={24} />}
         >
-          Novo pedidos
+          Nova venda
         </LinkButton>)}
         breadcrumb={[
           { title: "Vendas" },

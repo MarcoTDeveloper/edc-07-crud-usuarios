@@ -30,20 +30,40 @@ type CreateUserFormData = {
     passwordConfirmation: string;
     permissions: {
         users: CrudProps;
+        products: CrudProps;
+        orders: CrudProps;
+        sales: CrudProps;
+        inventory: CrudProps;
     }
 }
 
 export default function CreateUser() {
     const { register, handleSubmit, formState, setValue, getValues, setError } = useForm<CreateUserFormData>();
     const [usersRead, setUsersRead] = useState<boolean>(false);
+    const [productsRead, setProductsRead] = useState<boolean>(false);
+    const [ordersRead, setOrdersRead] = useState<boolean>(false);
+    const [salesRead, setSalesRead] = useState<boolean>(false);
+    const [inventoryRead, setInventoryRead] = useState<boolean>(false);
 
     useEffect(() => {
         if (!usersRead) {
             setValue("permissions.users.create", false);
             setValue("permissions.users.update", false);
             setValue("permissions.users.delete", false);
+        } else if (!productsRead) {
+            setValue("permissions.products.create", false);
+            setValue("permissions.products.update", false);
+            setValue("permissions.products.delete", false);
+        } else if (!ordersRead) {
+            setValue("permissions.orders.create", false);
+            setValue("permissions.orders.update", false);
+            setValue("permissions.orders.delete", false);
+        } else if (!salesRead) {
+            setValue("permissions.sales.create", false);
+            setValue("permissions.sales.update", false);
+            setValue("permissions.sales.delete", false);
         }
-    }, [usersRead, setValue]);
+    }, [usersRead, productsRead, ordersRead, salesRead, setValue]);
 
     const handleCreateUser: SubmitHandler<CreateUserFormData> = async (data) => {
         Fetch.post("/users/create", data).then(() => {
@@ -204,30 +224,30 @@ export default function CreateUser() {
                                     id="productRead"
                                     label="Produtos"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.products.read", {
+                                        onChange: (e) => setProductsRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
                                     id="productCreate"
                                     label="Criar produtos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.create")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.products.create")}
+                                    disabled={!productsRead}
                                 />
                                 <CheckBox
                                     id="productUpdate"
                                     label="Editar produtos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.update")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.products.update")}
+                                    disabled={!productsRead}
                                 />
                                 <CheckBox
                                     id="productDelete"
                                     label="Excluir produtos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.delete")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.products.delete")}
+                                    disabled={!productsRead}
                                 />
 
                                 <Hr className="my-4" />
@@ -236,30 +256,30 @@ export default function CreateUser() {
                                     id="orderRead"
                                     label="Pedidos"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.orders.read", {
+                                        onChange: (e) => setOrdersRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
                                     id="orderCreate"
                                     label="Criar pedidos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.create")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.orders.create")}
+                                    disabled={!ordersRead}
                                 />
                                 <CheckBox
                                     id="orderUpdate"
                                     label="Editar pedidos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.update")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.orders.update")}
+                                    disabled={!ordersRead}
                                 />
                                 <CheckBox
                                     id="orderDelete"
                                     label="Excluir pedidos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.delete")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.orders.delete")}
+                                    disabled={!ordersRead}
                                 />
 
                                 <Hr className="my-4" />
@@ -268,30 +288,30 @@ export default function CreateUser() {
                                     id="saleRead"
                                     label="Vendas"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.sales.read", {
+                                        onChange: (e) => setSalesRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
                                     id="saleCreate"
                                     label="Criar vendas"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.create")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.sales.create")}
+                                    disabled={!salesRead}
                                 />
                                 <CheckBox
                                     id="saleUpdate"
                                     label="Editar vendas"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.update")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.sales.update")}
+                                    disabled={!salesRead}
                                 />
                                 <CheckBox
                                     id="saleDelete"
                                     label="Excluir vendas"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.delete")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.sales.delete")}
+                                    disabled={!salesRead}
                                 />
 
                                 <Hr className="my-4" />
@@ -300,8 +320,8 @@ export default function CreateUser() {
                                     id="inventoryRead"
                                     label="Ver estoque"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.inventory.read", {
+                                        onChange: (e) => setInventoryRead(e.target.checked)
                                     })}
                                 />
                             </div>

@@ -9,22 +9,36 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Fetch } from "@/services/api";
+import { Select } from "@/components/ui/Select";
+import { useFetch } from "@/hooks/useFetch";
+import { Loading } from "@/components/ui/Loading";
 
 type CreateOrderFormData = {
-    userId: number,
-    productId: number,
+    product_id: number,
     amount: number,
 }
 
-export default function CreateOrder() {
-    const { register, handleSubmit, formState, setValue } = useForm<CreateOrderFormData>();
+type Product = {
+    id: number;
+    name: string;
+}
 
-    const handleCreateUser: SubmitHandler<CreateOrderFormData> = async (data) => {
-        Fetch.post("/products/create", data).then(() => {
-            toast.success("Pedido criado com sucesso!");
-            Router.push("/products");
+
+export default function CreateOrder() {
+    const { register, handleSubmit, formState } = useForm<CreateOrderFormData>();
+
+    const { data: dataProducts } = useFetch<Product[]>("/products");
+
+    if (!dataProducts) {
+        return <Loading />;
+    }
+
+    const handleCreateOrder: SubmitHandler<CreateOrderFormData> = async (data) => {
+        Fetch.post("/orders/create", data).then(() => {
+            toast.success("Pedido feito com sucesso!");
+            Router.push("/orders");
         }).catch(() => {
-            toast.error("Erro ao criar pedido!");
+            toast.error("Erro ao fazer pedido!");
         });
     };
 
@@ -32,7 +46,7 @@ export default function CreateOrder() {
         <>
             <Head title="Novo produto" />
 
-            <form onSubmit={handleSubmit(handleCreateUser)}>
+            <form onSubmit={handleSubmit(handleCreateOrder)}>
                 <PageHeader
                     className="mb-4"
                     title="Novo pedido"
@@ -54,30 +68,40 @@ export default function CreateOrder() {
                 />
 
 
-                <Card title="Dados do pedidos">
+                <Card title="Dados do pedido">
                     <div className="p-4">
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-                            <Input
-                                label="Nome"
-                                id="name"
-                                type="text"
+                            <Select
+                                label="Produtos"
+                                id="productId"
                                 className="mb-4"
-                                {...register("name", {
+                                {...register("product_id", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                error={formState.errors.name?.message}
-                            />
+                                error={formState.errors.product_id?.message}
+                            >
+                                {!dataProducts ?
+                                    <option value="Nada por aqui..." disabled>Nada por aqui...</option>
+                                    : (
+                                        <>
+                                            <option value="Selecione" disabled>Selecione</option>
+                                            {dataProducts.map(product => (
+                                                <option key={product.id} value={product.id}>{product.name}</option>
+                                            ))}
+                                        </>
+                                    )}
+                            </Select>
                             <Input
-                                label="Preço"
-                                id="price"
+                                label="Quantidade"
+                                id="amount"
                                 type="number"
                                 className="mb-4"
-                                {...register("price", {
+                                {...register("amount", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                error={formState.errors.price?.message}
+                                error={formState.errors.amount?.message}
                             />
                         </div>
                     </div>

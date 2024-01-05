@@ -43,6 +43,10 @@ type User = {
             update: boolean;
         };
         users: CrudProps;
+        products: CrudProps;
+        orders: CrudProps;
+        sales: CrudProps;
+        inventory: CrudProps;
     }
 }
 
@@ -56,7 +60,13 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
     const { data } = useFetch<User>(`/users/${slug}`);
     const { register, handleSubmit, formState, setValue, getValues, watch } = useForm<UpdateUserFormData>();
     const [changePassword, setChangePassword] = useState<boolean>(false);
+
     const [usersRead, setUsersRead] = useState<boolean>(false);
+    const [productsRead, setProductsRead] = useState<boolean>(false);
+    const [ordersRead, setOrdersRead] = useState<boolean>(false);
+    const [salesRead, setSalesRead] = useState<boolean>(false);
+    const [inventoryRead, setInventoryRead] = useState<boolean>(false);
+
     const watchUserName = watch("name");
 
     useEffect(() => {
@@ -66,12 +76,35 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
             setValue("email", data.email);
             setValue("position", data.position);
             setValue("status", data.status);
-            // setValue("permissions.config.update", data.permissions.config.update);
+
             setValue("permissions.users.create", data.permissions.users.create);
             setValue("permissions.users.read", data.permissions.users.read);
             setValue("permissions.users.update", data.permissions.users.update);
             setValue("permissions.users.delete", data.permissions.users.delete);
+
+            setValue("permissions.products.create", data.permissions.products.create);
+            setValue("permissions.products.read", data.permissions.products.read);
+            setValue("permissions.products.update", data.permissions.products.update);
+            setValue("permissions.products.delete", data.permissions.products.delete);
+
+            setValue("permissions.orders.create", data.permissions.orders.create);
+            setValue("permissions.orders.read", data.permissions.orders.read);
+            setValue("permissions.orders.update", data.permissions.orders.update);
+            setValue("permissions.orders.delete", data.permissions.orders.delete);
+
+            setValue("permissions.sales.create", data.permissions.sales.create);
+            setValue("permissions.sales.read", data.permissions.sales.read);
+            setValue("permissions.sales.update", data.permissions.sales.update);
+            setValue("permissions.sales.delete", data.permissions.sales.delete);
+
+            setValue("permissions.inventory.read", data.permissions.inventory.read);
+
             setUsersRead(data.permissions.users.read);
+            setProductsRead(data.permissions.products.read);
+            setOrdersRead(data.permissions.orders.read);
+            setSalesRead(data.permissions.sales.read);
+            setInventoryRead(data.permissions.inventory.read);
+
         }
     }, [data, setValue]);
 
@@ -81,6 +114,18 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
             setValue("permissions.users.create", false);
             setValue("permissions.users.update", false);
             setValue("permissions.users.delete", false);
+
+            setValue("permissions.products.create", false);
+            setValue("permissions.products.update", false);
+            setValue("permissions.products.delete", false);
+
+            setValue("permissions.orders.create", false);
+            setValue("permissions.orders.update", false);
+            setValue("permissions.orders.delete", false);
+
+            setValue("permissions.sales.create", false);
+            setValue("permissions.sales.update", false);
+            setValue("permissions.sales.delete", false);
         }
     };
 
@@ -204,13 +249,6 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                         <Card title="Funções do usuário">
                             <div className="p-4">
                                 <CheckBox
-                                    id="configUpdate"
-                                    label="Configurações"
-                                    className="mb-2"
-                                    {...register("permissions.config.update")}
-                                />
-                                <Hr className="my-4" />
-                                <CheckBox
                                     id="userRead"
                                     label="Usuários"
                                     className="mb-2"
@@ -246,30 +284,30 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     id="productRead"
                                     label="Produtos"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.products.read", {
+                                        onChange: (e) => setProductsRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
                                     id="productCreate"
                                     label="Criar produtos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.create")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.products.create")}
+                                    disabled={!productsRead}
                                 />
                                 <CheckBox
                                     id="productUpdate"
                                     label="Editar produtos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.update")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.products.update")}
+                                    disabled={!productsRead}
                                 />
                                 <CheckBox
                                     id="productDelete"
                                     label="Excluir produtos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.delete")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.products.delete")}
+                                    disabled={!productsRead}
                                 />
 
                                 <Hr className="my-4" />
@@ -278,30 +316,30 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     id="orderRead"
                                     label="Pedidos"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.orders.read", {
+                                        onChange: (e) => setOrdersRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
                                     id="orderCreate"
                                     label="Criar pedidos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.create")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.orders.create")}
+                                    disabled={!ordersRead}
                                 />
                                 <CheckBox
                                     id="orderUpdate"
                                     label="Editar pedidos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.update")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.orders.update")}
+                                    disabled={!ordersRead}
                                 />
                                 <CheckBox
                                     id="orderDelete"
                                     label="Excluir pedidos"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.delete")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.orders.delete")}
+                                    disabled={!ordersRead}
                                 />
 
                                 <Hr className="my-4" />
@@ -310,30 +348,30 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     id="saleRead"
                                     label="Vendas"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.sales.read", {
+                                        onChange: (e) => setSalesRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
                                     id="saleCreate"
                                     label="Criar vendas"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.create")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.sales.create")}
+                                    disabled={!salesRead}
                                 />
                                 <CheckBox
                                     id="saleUpdate"
                                     label="Editar vendas"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.update")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.sales.update")}
+                                    disabled={!salesRead}
                                 />
                                 <CheckBox
                                     id="saleDelete"
                                     label="Excluir vendas"
                                     className="ml-5 mb-2"
-                                    {...register("permissions.users.delete")}
-                                    disabled={!usersRead}
+                                    {...register("permissions.sales.delete")}
+                                    disabled={!salesRead}
                                 />
 
                                 <Hr className="my-4" />
@@ -342,8 +380,8 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     id="inventoryRead"
                                     label="Ver estoque"
                                     className="mb-2"
-                                    {...register("permissions.users.read", {
-                                        onChange: (e) => setUsersRead(e.target.checked)
+                                    {...register("permissions.inventory.read", {
+                                        onChange: (e) => setInventoryRead(e.target.checked)
                                     })}
                                 />
                             </div>

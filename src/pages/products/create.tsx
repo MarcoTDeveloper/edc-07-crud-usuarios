@@ -16,10 +16,10 @@ type CreateProductFormData = {
     price: string;
 }
 
-export default function CreateUser() {
+export default function CreateProduct() {
     const { register, handleSubmit, formState, setValue } = useForm<CreateProductFormData>();
 
-    const handleCreateUser: SubmitHandler<CreateProductFormData> = async (data) => {
+    const handleCreateProduct: SubmitHandler<CreateProductFormData> = async (data) => {
         Fetch.post("/products/create", data).then(() => {
             toast.success("Produto criado com sucesso!");
             Router.push("/products");
@@ -32,7 +32,7 @@ export default function CreateUser() {
         <>
             <Head title="Novo produto" />
 
-            <form onSubmit={handleSubmit(handleCreateUser)}>
+            <form onSubmit={handleSubmit(handleCreateProduct)}>
                 <PageHeader
                     className="mb-4"
                     title="Novo produto"

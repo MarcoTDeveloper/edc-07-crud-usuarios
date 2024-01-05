@@ -29,14 +29,14 @@ export function UsersList() {
 
     const columnHelper = createColumnHelper<Users>();
     const columns = [
-        columnHelper.accessor("status", {
-            header: "Status",
-            size: 10,
+        columnHelper.accessor("id", {
+            header: "ID",
+            size: 5,
             cell: info => (
                 <div className="flex items-center justify-center">
-                    {info.renderValue() ? "Ativo" : "Inativo"}
+                    {info.renderValue()}
                 </div>
-            ),
+            )
         }),
         columnHelper.accessor("name", {
             header: "Nome",
@@ -47,6 +47,15 @@ export function UsersList() {
             cell: info => (
                 <div className="flex items-center justify-center">
                     {info.renderValue()}
+                </div>
+            ),
+        }),
+        columnHelper.accessor("status", {
+            header: "Status",
+            size: 10,
+            cell: info => (
+                <div className="flex items-center justify-center">
+                    {info.renderValue() ? "Ativo" : "Inativo"}
                 </div>
             ),
         }),

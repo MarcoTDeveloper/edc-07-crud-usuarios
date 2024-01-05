@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { FloppyDiskBack, User } from "@phosphor-icons/react";
+import { useEffect } from "react";
+import { FloppyDiskBack } from "@phosphor-icons/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Router from "next/router";
@@ -11,14 +11,11 @@ import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { CheckBox } from "@/components/ui/CheckBox";
 import { Loading } from "@/components/ui/Loading";
-import { AuthContext, UserProps } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
-import { Collapse } from "@/components/ui/Collapse";
 import { Fetch } from "@/services/api";
 import { authOptions } from "../api/auth/[...nextauth]";
+import { UserProps } from "@/contexts/AuthContext";
 
 type UpdateProductProps = {
     slug: string;
@@ -30,12 +27,22 @@ type Product = {
     price: number;
 }
 
+interface UpdateProductFormData extends Product { }
+
 export default function UpdateUser({ slug }: UpdateProductProps) {
     const { data } = useFetch<Product>(`/products/${slug}`);
-    const { register, handleSubmit, formState, setValue, getValues, watch } = useForm();
+    const { register, handleSubmit, formState, setValue, watch } = useForm<UpdateProductFormData>();
     const watchUserName = watch("name");
 
-    const handleUpdateUser: SubmitHandler<Product> = async (data) => {
+    useEffect(() => {
+        if (data) {
+            setValue("id", data.id);
+            setValue("name", data.name);
+            setValue("price", data.price);
+        }
+    }, [data, setValue]);
+
+    const handleUpdateProduct: SubmitHandler<UpdateProductFormData> = async (data) => {
         Fetch.post("/products/update", data).then(() => {
             toast.success("Produto atualizado com sucesso!");
             Router.push("/products");
@@ -43,7 +50,7 @@ export default function UpdateUser({ slug }: UpdateProductProps) {
             toast.error("Erro ao atualizar produto!");
         });
     };
-    
+
     if (!data) {
         return <Loading />;
     }
@@ -52,7 +59,7 @@ export default function UpdateUser({ slug }: UpdateProductProps) {
         <>
             <Head title="Editar produto" />
 
-            <form /*onSubmit={handleSubmit(handleUpdateUser)}*/>
+            <form onSubmit={handleSubmit(handleUpdateProduct)}>
                 <PageHeader
                     className="mb-4"
                     title="Editar produto"
@@ -85,18 +92,18 @@ export default function UpdateUser({ slug }: UpdateProductProps) {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                // error={formState.errors.name?.message}
+                                error={formState.errors.name?.message}
                             />
                             <Input
                                 label="Preço"
-                                id="number"
-                                type="price"
+                                id="price"
+                                type="number"
                                 className="mb-4"
                                 {...register("price", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                // error={formState.errors.email?.message}
+                                error={formState.errors.price?.message}
                             />
                         </div>
                     </div>

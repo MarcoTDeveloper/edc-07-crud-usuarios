@@ -2,31 +2,35 @@ import { useCallback, useContext } from "react";
 import Link from "next/link";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Eye } from "@phosphor-icons/react";
+import { format } from "date-fns";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
-import { DeleteProduct } from "./Delete";
+import { DeleteOrder } from "./Delete";
 import { Loading } from "../ui/Loading";
 import { Table } from "../ui/Table";
 import { NoData } from "../ui/NoData";
+import { Products } from "../Products/List";
 
-export type Products = {
+export type Orders = {
     id: number;
-    name: string;
-    price: number;
+    product: Products;
+    user: string;
+    date: string;
+    amount: number;
     slug: string;
 }
 
-export function ProductsList() {
-    const { data, mutate, isLoading } = useFetch<Products[]>("/products");
+export function OrdersList() {
+    const { data, mutate, isLoading } = useFetch<Orders[]>("/orders");
     const { user } = useContext(AuthContext);
 
-    const onDeleteProduct = useCallback((slug: string) => {
-        const updateProductsData = data?.filter(product => product.slug !== slug);
-        mutate(updateProductsData, false);
+    const onDeleteOrder = useCallback((slug: string) => {
+        const updateOrdersData = data?.filter(order => order.slug !== slug);
+        mutate(updateOrdersData, false);
     }, [data, mutate]);
 
-    const columnHelper = createColumnHelper<Products>();
+    const columnHelper = createColumnHelper<Orders>();
     const columns = [
         columnHelper.accessor("id", {
             header: "ID",
@@ -37,15 +41,27 @@ export function ProductsList() {
                 </div>
             ),
         }),
-        columnHelper.accessor("name", {
-            header: "Nome",
+        columnHelper.accessor("user", {
+            header: "Usuário",
         }),
-        columnHelper.accessor("price", {
-            header: "Preço",
+        columnHelper.accessor("product.name", {
+            header: "Produto",
+        }),
+        columnHelper.accessor("amount", {
+            header: "Quantidade",
+            size: 5,
+            cell: info => (
+                <div className="flex items-center justify-center">
+                    {info.renderValue()}
+                </div>
+            ),
+        }),
+        columnHelper.accessor("date", {
+            header: "Data",
             size: 10,
             cell: info => (
                 <div className="flex items-center justify-center">
-                    {new Intl.NumberFormat("pt-Br", { style: "currency", currency: "BRL" }).format(info.renderValue()!)}
+                    {format(new Date(info.renderValue()!), "dd/LL/yyyy 'às' HH:mm")}
                 </div>
             ),
         }),
@@ -60,9 +76,9 @@ export function ProductsList() {
                         </Link>
                     )}
                     {user?.permissions.includes("products.delete") && (
-                        <DeleteProduct
+                        <DeleteOrder
                             slug={info.renderValue() as string}
-                            mutate={onDeleteProduct}
+                            mutate={onDeleteOrder}
                         />
                     )}
                 </div>
@@ -73,7 +89,7 @@ export function ProductsList() {
     if (!data || isLoading) {
         return <Loading />;
     } else if (!data || data.length === 0) {
-        return <NoData message="Nenhum produto encontrado!" />;
+        return <NoData message="Nenhum pedido encontrado!" />;
     }
 
     return (

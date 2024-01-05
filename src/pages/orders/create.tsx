@@ -13,6 +13,7 @@ import { Fetch } from "@/services/api";
 type CreateOrderFormData = {
     userId: number,
     productId: number,
+    amount: number,
 }
 
 export default function CreateOrder() {

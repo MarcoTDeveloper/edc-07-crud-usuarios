@@ -9,10 +9,11 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Fetch } from "@/services/api";
+import { moneyMask } from "@/hooks/useMoneyMask";
 
 type CreateProductFormData = {
     name: string;
-    price: number;
+    price: string;
 }
 
 export default function CreateUser() {
@@ -70,10 +71,13 @@ export default function CreateUser() {
                             <Input
                                 label="Preço"
                                 id="price"
-                                type="number"
+                                type="text"
                                 className="mb-4"
                                 {...register("price", {
-                                    required: "Campo obrigatório"
+                                    required: "Campo obrigatório",
+                                    onChange(event) {
+                                        setValue("price", moneyMask(event.target.value));
+                                    },
                                 })}
                                 required
                                 error={formState.errors.price?.message}

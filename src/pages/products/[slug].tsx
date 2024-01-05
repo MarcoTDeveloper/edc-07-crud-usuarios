@@ -13,7 +13,6 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { CheckBox } from "@/components/ui/CheckBox";
-import { Hr } from "@/components/ui/Hr";
 import { Loading } from "@/components/ui/Loading";
 import { AuthContext, UserProps } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
@@ -33,26 +32,10 @@ type Product = {
 
 export default function UpdateUser({ slug }: UpdateProductProps) {
     const { data } = useFetch<Product>(`/products/${slug}`);
-    const { user } = useContext(AuthContext);
-    const { register, handleSubmit, formState, setValue, getValues, watch } = useForm<UpdateProductFormData>();
-    const [changePassword, setChangePassword] = useState<boolean>(false);
-    const [usersRead, setUsersRead] = useState<boolean>(false);
+    const { register, handleSubmit, formState, setValue, getValues, watch } = useForm();
     const watchUserName = watch("name");
 
-    useEffect(() => {
-        if (data) {
-            setValue("id", data.id);
-            setValue("name", data.name);
-            setValue("price", data.price);
-            setValue("permissions.products.create", data.permissions.products.create);
-            setValue("permissions.products.read", data.permissions.products.read);
-            setValue("permissions.products.update", data.permissions.products.update);
-            setValue("permissions.products.delete", data.permissions.products.delete);
-            setUsersRead(data.permissions.products.read);
-        }
-    }, [data, setValue]);
-
-    const handleUpdateUser: SubmitHandler<UpdateProductFormData> = async (data) => {
+    const handleUpdateUser: SubmitHandler<Product> = async (data) => {
         Fetch.post("/products/update", data).then(() => {
             toast.success("Produto atualizado com sucesso!");
             Router.push("/products");
@@ -60,7 +43,7 @@ export default function UpdateUser({ slug }: UpdateProductProps) {
             toast.error("Erro ao atualizar produto!");
         });
     };
-
+    
     if (!data) {
         return <Loading />;
     }
@@ -69,7 +52,7 @@ export default function UpdateUser({ slug }: UpdateProductProps) {
         <>
             <Head title="Editar produto" />
 
-            <form onSubmit={handleSubmit(handleUpdateUser)}>
+            <form /*onSubmit={handleSubmit(handleUpdateUser)}*/>
                 <PageHeader
                     className="mb-4"
                     title="Editar produto"
@@ -90,85 +73,34 @@ export default function UpdateUser({ slug }: UpdateProductProps) {
                     ]}
                 />
 
-                <div className="flex flex-col gap-4 md:grid md:grid-cols-12">
-                    <div className="md:col-span-8">
-                        <Card title="Dados do usuário">
-                            <div className="p-4">
-                                <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-                                    <Input
-                                        label="Nome"
-                                        id="name"
-                                        type="text"
-                                        className="mb-4"
-                                        {...register("name", {
-                                            required: "Campo obrigatório"
-                                        })}
-                                        required
-                                        error={formState.errors.name?.message}
-                                    />
-                                    <Input
-                                        label="E-mail"
-                                        id="number"
-                                        type="email"
-                                        className="mb-4"
-                                        {...register("email", {
-                                            required: "Campo obrigatório"
-                                        })}
-                                        required
-                                        error={formState.errors.email?.message}
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-                                    <Select
-                                        label="Status"
-                                        id="status"
-                                        className="mb-4"
-                                        {...register("status", {
-                                            required: "Campo obrigatório"
-                                        })}
-                                        required
-                                        error={formState.errors.status?.message}
-                                    >
-                                        <option value="">Selecione</option>
-                                        <option value="true">Ativo</option>
-                                        <option value="false">Inativo</option>
-                                    </Select>
-                                </div>
-                                <CheckBox
-                                    id="changePassword"
-                                    label="Alterar senha"
-                                    {...register("changePassword", {
-                                        onChange: (e) => setChangePassword(e.target.checked)
-                                    })}
-                                />
-                            </div>
-                            <Collapse isOpen={changePassword}>
-                                {changePassword && (
-                                    <div className="px-4 pb-4">
-                                        <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
-                                            <Input
-                                                label="Senha"
-                                                id="password"
-                                                type="password"
-                                                className="mb-4 md:mb-0"
-                                                {...register("password")}
-                                            />
-                                            <Input
-                                                label="Confirmar Senha"
-                                                id="passwordConfirmation"
-                                                type="password"
-                                                {...register("passwordConfirmation", {
-                                                    validate: (value) => value === getValues("password") || "As senhas não conferem"
-                                                })}
-                                                error={formState.errors.passwordConfirmation?.message}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </Collapse>
-                        </Card>
+                <Card title="Dados do produto">
+                    <div className="p-4">
+                        <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
+                            <Input
+                                label="Nome"
+                                id="name"
+                                type="text"
+                                className="mb-4"
+                                {...register("name", {
+                                    required: "Campo obrigatório"
+                                })}
+                                required
+                                // error={formState.errors.name?.message}
+                            />
+                            <Input
+                                label="Preço"
+                                id="number"
+                                type="price"
+                                className="mb-4"
+                                {...register("price", {
+                                    required: "Campo obrigatório"
+                                })}
+                                required
+                                // error={formState.errors.email?.message}
+                            />
+                        </div>
                     </div>
-                </div>
+                </Card>
             </form>
         </>
     );
@@ -187,10 +119,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     } else {
         const { user } = session?.user as { user: UserProps };
-        if (!user.permissions.includes("users.update")) {
+        if (!user.permissions.includes("products.update")) {
             return {
                 redirect: {
-                    destination: "/users",
+                    destination: "/products",
                     permanent: false
                 }
             };

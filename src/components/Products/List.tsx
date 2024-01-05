@@ -13,7 +13,7 @@ import { NoData } from "../ui/NoData";
 export type Products = {
     id: number;
     name: string;
-    price: number;
+    price: string;
     slug: string;
 }
 
@@ -29,11 +29,12 @@ export function ProductsList() {
     const columnHelper = createColumnHelper<Products>();
     const columns = [
         columnHelper.accessor("price", {
-            header: "Price",
+            header: "Preço",
             size: 10,
             cell: info => (
                 <div className="flex items-center justify-center">
                     {info.renderValue()}
+                    {/* new Intl.NumberFormat('pt-Br', { style: 'currency', currency:'BRL' }).format() */}
                 </div>
             ),
         }),

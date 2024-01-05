@@ -10,20 +10,20 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Fetch } from "@/services/api";
 
-type CreateProductFormData = {
-    name: string;
-    price: number;
+type CreateOrderFormData = {
+    userId: number,
+    productId: number,
 }
 
-export default function CreateUser() {
-    const { register, handleSubmit, formState, setValue } = useForm<CreateProductFormData>();
+export default function CreateOrder() {
+    const { register, handleSubmit, formState, setValue } = useForm<CreateOrderFormData>();
 
-    const handleCreateUser: SubmitHandler<CreateProductFormData> = async (data) => {
+    const handleCreateUser: SubmitHandler<CreateOrderFormData> = async (data) => {
         Fetch.post("/products/create", data).then(() => {
-            toast.success("Produto criado com sucesso!");
+            toast.success("Pedido criado com sucesso!");
             Router.push("/products");
         }).catch(() => {
-            toast.error("Erro ao criar produto!");
+            toast.error("Erro ao criar pedido!");
         });
     };
 
@@ -34,11 +34,11 @@ export default function CreateUser() {
             <form onSubmit={handleSubmit(handleCreateUser)}>
                 <PageHeader
                     className="mb-4"
-                    title="Novo produto"
+                    title="Novo pedido"
                     button={
                         <Button
                             type="submit"
-                            ariaLabel="Botão que salva o produto"
+                            ariaLabel="Botão que salva o pedido"
                             variant="secondary"
                             icon={<FloppyDiskBack size={24} />}
                             isLoading={formState.isSubmitting}
@@ -47,13 +47,13 @@ export default function CreateUser() {
                         </Button>
                     }
                     breadcrumb={[
-                        { title: "Produtos", href: "/products" },
-                        { title: "Criar Produto" }
+                        { title: "Pedidos", href: "/orders" },
+                        { title: "Criar pedido" }
                     ]}
                 />
 
 
-                <Card title="Dados do produto">
+                <Card title="Dados do pedidos">
                     <div className="p-4">
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                             <Input

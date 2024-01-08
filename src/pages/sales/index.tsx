@@ -5,7 +5,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
-import { UsersList } from "@/components/Users/List";
+import { SalesList } from "@/components/Sales/List";
 
 export default function Users() {
   const { user } = useContext(AuthContext);
@@ -18,7 +18,7 @@ export default function Users() {
         className="mb-4"
         title="Vendas"
         button={user?.permissions.includes("sales.create") && (<LinkButton
-          href="/products/create"
+          href="/sales/create"
           variant="secondary"
           icon={<Plus size={24} />}
         >
@@ -29,7 +29,7 @@ export default function Users() {
         ]}
       />
 
-      <UsersList />
+      <SalesList />
     </>
   );
 }

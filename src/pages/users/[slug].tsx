@@ -94,7 +94,6 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
 
             setValue("permissions.sales.create", data.permissions.sales.create);
             setValue("permissions.sales.read", data.permissions.sales.read);
-            setValue("permissions.sales.update", data.permissions.sales.update);
             setValue("permissions.sales.delete", data.permissions.sales.delete);
 
             setValue("permissions.inventory.read", data.permissions.inventory.read);
@@ -104,7 +103,6 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
             setOrdersRead(data.permissions.orders.read);
             setSalesRead(data.permissions.sales.read);
             setInventoryRead(data.permissions.inventory.read);
-
         }
     }, [data, setValue]);
 
@@ -114,23 +112,37 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
             setValue("permissions.users.create", false);
             setValue("permissions.users.update", false);
             setValue("permissions.users.delete", false);
+        }
+    };
 
+    const handleUpdateProductsRead = (status: boolean) => {
+        setProductsRead(status);
+        if (!status) {
             setValue("permissions.products.create", false);
             setValue("permissions.products.update", false);
             setValue("permissions.products.delete", false);
+        }
+    };
 
+    const handleUpdateOrdersRead = (status: boolean) => {
+        setOrdersRead(status);
+        if (!status) {
             setValue("permissions.orders.create", false);
             setValue("permissions.orders.update", false);
             setValue("permissions.orders.delete", false);
+        }
+    };
 
+    const handleUpdateSalesRead = (status: boolean) => {
+        setSalesRead(status);
+        if (!status) {
             setValue("permissions.sales.create", false);
-            setValue("permissions.sales.update", false);
             setValue("permissions.sales.delete", false);
         }
     };
 
     const handleUpdateUser: SubmitHandler<UpdateUserFormData> = async (data) => {
-        Fetch.post("/users/update", data).then(() => {
+        Fetch.put("/users", data).then(() => {
             toast.success("Usuário atualizado com sucesso!");
             Router.push("/users");
         }).catch(() => {
@@ -285,7 +297,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     label="Produtos"
                                     className="mb-2"
                                     {...register("permissions.products.read", {
-                                        onChange: (e) => setProductsRead(e.target.checked)
+                                        onChange: (e) => handleUpdateProductsRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
@@ -317,7 +329,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     label="Pedidos"
                                     className="mb-2"
                                     {...register("permissions.orders.read", {
-                                        onChange: (e) => setOrdersRead(e.target.checked)
+                                        onChange: (e) => handleUpdateOrdersRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
@@ -349,7 +361,7 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     label="Vendas"
                                     className="mb-2"
                                     {...register("permissions.sales.read", {
-                                        onChange: (e) => setSalesRead(e.target.checked)
+                                        onChange: (e) => handleUpdateSalesRead(e.target.checked)
                                     })}
                                 />
                                 <CheckBox
@@ -357,13 +369,6 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                     label="Criar vendas"
                                     className="ml-5 mb-2"
                                     {...register("permissions.sales.create")}
-                                    disabled={!salesRead}
-                                />
-                                <CheckBox
-                                    id="saleUpdate"
-                                    label="Editar vendas"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.sales.update")}
                                     disabled={!salesRead}
                                 />
                                 <CheckBox

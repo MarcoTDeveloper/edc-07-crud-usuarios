@@ -1,21 +1,25 @@
+import { useEffect } from "react";
 import { FloppyDiskBack } from "@phosphor-icons/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Router from "next/router";
+import { GetServerSideProps } from "next/types";
+import { getServerSession } from "next-auth/next";
 
 import { Button } from "@/components/ui/Button";
 import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { Fetch } from "@/services/api";
-import { Select } from "@/components/ui/Select";
-import { useFetch } from "@/hooks/useFetch";
 import { Loading } from "@/components/ui/Loading";
+import { useFetch } from "@/hooks/useFetch";
+import { Fetch } from "@/services/api";
+import { authOptions } from "../api/auth/[...nextauth]";
+import { UserProps } from "@/contexts/AuthContext";
+import { Select } from "@/components/ui/Select";
 
-type CreateOrderFormData = {
-    product_id: number,
-    amount: number,
+type UpdateOrderProps = {
+    slug: string;
 }
 
 type Product = {
@@ -23,36 +27,60 @@ type Product = {
     name: string;
 }
 
-export default function CreateOrder() {
-    const { register, handleSubmit, formState } = useForm<CreateOrderFormData>();
+type Order = {
+    id: number;
+    product_id: number;
+    amount: number;
+    product: Product;
+}
+
+interface UpdateOrderFormData extends Order { }
+
+export default function UpdateOrder({ slug }: UpdateOrderProps) {
+    const { data } = useFetch<Order>(`/orders/${slug}`);
+
+    const { register, handleSubmit, formState, setValue, watch } = useForm<UpdateOrderFormData>();
+    const watchUserName = watch("product.name");
 
     const { data: dataProducts } = useFetch<Product[]>("/products");
+
+    useEffect(() => {
+        if (data) {
+            setValue("id", data.id);
+            setValue("product_id", data.product_id);
+            setValue("amount", data.amount);
+        }
+    }, [data, setValue]);
 
     if (!dataProducts) {
         return <Loading />;
     }
 
-    const handleCreateOrder: SubmitHandler<CreateOrderFormData> = async (data) => {
-        Fetch.post("/orders/create", data).then(() => {
-            toast.success("Pedido feito com sucesso!");
+    const handleUpdateOrder: SubmitHandler<UpdateOrderFormData> = async (data) => {
+        Fetch.put("/orders", data).then(() => {
+            toast.success("Pedido atualizado com sucesso!");
             Router.push("/orders");
         }).catch(() => {
-            toast.error("Erro ao fazer pedido!");
+            toast.error("Erro ao atualizar pedido!");
         });
     };
 
+    if (!data) {
+        return <Loading />;
+    }
+
     return (
         <>
-            <Head title="Novo produto" />
+            <Head title="Editar pedido" />
 
-            <form onSubmit={handleSubmit(handleCreateOrder)}>
+            <form onSubmit={handleSubmit(handleUpdateOrder)}>
                 <PageHeader
                     className="mb-4"
-                    title="Novo pedido"
+                    title="Editar produto"
                     button={
                         <Button
                             type="submit"
-                            ariaLabel="Botão que salva o pedido"
+                            ariaLabel="Botão que salva o produto"
                             variant="secondary"
                             icon={<FloppyDiskBack size={24} />}
                             isLoading={formState.isSubmitting}
@@ -62,12 +90,11 @@ export default function CreateOrder() {
                     }
                     breadcrumb={[
                         { title: "Pedidos", href: "/orders" },
-                        { title: "Criar pedido" }
+                        { title: watchUserName || "Editar Pedido" }
                     ]}
                 />
 
-
-                <Card title="Dados do pedido">
+                <Card title="Dados do produto">
                     <div className="p-4">
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                             <Select
@@ -94,7 +121,7 @@ export default function CreateOrder() {
                             <Input
                                 label="Quantidade"
                                 id="amount"
-                                type="number"
+                                type="text"
                                 className="mb-4"
                                 {...register("amount", {
                                     required: "Campo obrigatório"
@@ -109,3 +136,33 @@ export default function CreateOrder() {
         </>
     );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getServerSession(context.req, context.res, authOptions);
+    const { slug } = context.params as { slug: string };
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false
+            }
+        };
+    } else {
+        const { user } = session?.user as { user: UserProps };
+        if (!user.permissions.includes("orders.update")) {
+            return {
+                redirect: {
+                    destination: "/orders",
+                    permanent: false
+                }
+            };
+        }
+
+        return {
+            props: {
+                slug
+            }
+        };
+    }
+};

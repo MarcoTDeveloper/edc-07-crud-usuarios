@@ -6,31 +6,31 @@ import { format } from "date-fns";
 
 import { AuthContext } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
-import { DeleteOrder } from "./Delete";
+import { DeleteSale } from "./Delete";
 import { Loading } from "../ui/Loading";
 import { Table } from "../ui/Table";
 import { NoData } from "../ui/NoData";
-import { Products } from "../Products/List";
 
-export type Orders = {
+export type Sales = {
     id: number;
-    product: Products;
     user: string;
+    client_name: string;
     date: string;
-    amount: number;
+    payment_methods: string;
     slug: string;
+    status: boolean;
 }
 
-export function OrdersList() {
-    const { data, mutate, isLoading } = useFetch<Orders[]>("/orders");
+export function SalesList() {
+    const { data, mutate, isLoading } = useFetch<Sales[]>("/sales");
     const { user } = useContext(AuthContext);
 
-    const onDeleteOrder = useCallback((slug: string) => {
-        const updateOrdersData = data?.filter(order => order.slug !== slug);
-        mutate(updateOrdersData, false);
+    const onDeleteSale = useCallback((slug: string) => {
+        const updateSalesData = data?.filter(sale => sale.slug !== slug);
+        mutate(updateSalesData, false);
     }, [data, mutate]);
 
-    const columnHelper = createColumnHelper<Orders>();
+    const columnHelper = createColumnHelper<Sales>();
     const columns = [
         columnHelper.accessor("id", {
             header: "ID",
@@ -44,12 +44,12 @@ export function OrdersList() {
         columnHelper.accessor("user", {
             header: "Usuário",
         }),
-        columnHelper.accessor("product.name", {
-            header: "Produto",
+        columnHelper.accessor("client_name", {
+            header: "Cliente",
         }),
-        columnHelper.accessor("amount", {
-            header: "Quantidade",
-            size: 5,
+        columnHelper.accessor("payment_methods", {
+            header: "Método de pagamento",
+            size: 10,
             cell: info => (
                 <div className="flex items-center justify-center">
                     {info.renderValue()}
@@ -65,20 +65,29 @@ export function OrdersList() {
                 </div>
             ),
         }),
+        columnHelper.accessor("status", {
+            header: "Situação",
+            size: 5,
+            cell: info => (
+                <div className="flex items-center justify-center">
+                    {info.renderValue() ? "Ativo" : "Cancelada"}
+                </div>
+            ),
+        }),
         columnHelper.accessor("slug", {
             header: "",
             size: 10,
             cell: info => (
                 <div className="flex items-center gap-2 justify-center">
-                    {user?.permissions.includes("orders.update") && (
-                        <Link href={`/orders/${info.renderValue()}`}>
+                    {user?.permissions.includes("products.update") && (
+                        <Link href={`/sales/${info.renderValue()}`}>
                             <Eye size={24} />
                         </Link>
                     )}
-                    {user?.permissions.includes("orders.delete") && (
-                        <DeleteOrder
+                    {user?.permissions.includes("sales.delete") && (
+                        <DeleteSale
                             slug={info.renderValue() as string}
-                            mutate={onDeleteOrder}
+                            mutate={onDeleteSale}
                         />
                     )}
                 </div>
@@ -89,7 +98,7 @@ export function OrdersList() {
     if (!data || isLoading) {
         return <Loading />;
     } else if (!data || data.length === 0) {
-        return <NoData message="Nenhum pedido encontrado!" />;
+        return <NoData message="Nenhuma venda encontrado!" />;
     }
 
     return (

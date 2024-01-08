@@ -44,7 +44,7 @@ export default function UpdateProduct({ slug }: UpdateProductProps) {
     }, [data, setValue]);
 
     const handleUpdateProduct: SubmitHandler<UpdateProductFormData> = async (data) => {
-        Fetch.put("/products", data).then(() => {
+        Fetch.post("/products/update", data).then(() => {
             toast.success("Produto atualizado com sucesso!");
             Router.push("/products");
         }).catch(() => {
@@ -58,12 +58,11 @@ export default function UpdateProduct({ slug }: UpdateProductProps) {
 
     return (
         <>
-            <Head title="Editar produto" />
+            <Head title="Sobre o produto" />
 
-            <form onSubmit={handleSubmit(handleUpdateProduct)}>
                 <PageHeader
                     className="mb-4"
-                    title="Editar produto"
+                    title="Sobre o produto"
                     button={
                         <Button
                             type="submit"
@@ -112,7 +111,6 @@ export default function UpdateProduct({ slug }: UpdateProductProps) {
                         </div>
                     </div>
                 </Card>
-            </form>
         </>
     );
 }

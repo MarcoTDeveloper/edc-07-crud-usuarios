@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FloppyDiskBack } from "@phosphor-icons/react";
+import { FloppyDiskBack, SimCard } from "@phosphor-icons/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Router from "next/router";
@@ -50,20 +50,32 @@ export default function CreateUser() {
             setValue("permissions.users.create", false);
             setValue("permissions.users.update", false);
             setValue("permissions.users.delete", false);
-        } else if (!productsRead) {
+        }
+    }, [usersRead, setValue]);
+
+    useEffect(() => {
+        if (!productsRead) {
             setValue("permissions.products.create", false);
             setValue("permissions.products.update", false);
             setValue("permissions.products.delete", false);
-        } else if (!ordersRead) {
+        }
+    }, [productsRead, setValue]);
+
+    useEffect(() => {
+        if (!ordersRead) {
             setValue("permissions.orders.create", false);
             setValue("permissions.orders.update", false);
             setValue("permissions.orders.delete", false);
-        } else if (!salesRead) {
+        }
+    }, [ordersRead, setValue]);
+
+    useEffect(() => {
+        if (!salesRead) {
             setValue("permissions.sales.create", false);
             setValue("permissions.sales.update", false);
             setValue("permissions.sales.delete", false);
         }
-    }, [usersRead, productsRead, ordersRead, salesRead, setValue]);
+    }, [salesRead, setValue]);
 
     const handleCreateUser: SubmitHandler<CreateUserFormData> = async (data) => {
         Fetch.post("/users/create", data).then(() => {
@@ -297,13 +309,6 @@ export default function CreateUser() {
                                     label="Criar vendas"
                                     className="ml-5 mb-2"
                                     {...register("permissions.sales.create")}
-                                    disabled={!salesRead}
-                                />
-                                <CheckBox
-                                    id="saleUpdate"
-                                    label="Editar vendas"
-                                    className="ml-5 mb-2"
-                                    {...register("permissions.sales.update")}
                                     disabled={!salesRead}
                                 />
                                 <CheckBox

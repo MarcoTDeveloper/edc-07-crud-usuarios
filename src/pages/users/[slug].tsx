@@ -39,9 +39,6 @@ type User = {
     position: string;
     status: string;
     permissions: {
-        config: {
-            update: boolean;
-        };
         users: CrudProps;
         products: CrudProps;
         orders: CrudProps;

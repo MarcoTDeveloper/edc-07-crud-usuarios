@@ -11,7 +11,7 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 
 const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ label, className, id, error, children, required, ...rest }, ref) => {
     return (
-        <div className={classNames("flex flex-col", className, {
+        <div className={classNames("flex flex-col mb-auto", className, {
             "pointer-events-none opacity-50": rest.disabled
         })}>
             {label && (
@@ -23,7 +23,7 @@ const SelectBase: ForwardRefRenderFunction<HTMLSelectElement, SelectProps> = ({ 
                 </label>
             )}
             <select
-                className={classNames("py-[.65em] px-4 flex-1 rounded-md cursor-pointer bg-zinc-200 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500",{
+                className={classNames("py-[.65em] px-4 flex-1 rounded-md cursor-pointer bg-zinc-200 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500", {
                     "ring-2 ring-danger-500": error,
                     "focus:!ring-2 focus:!ring-danger-500": error,
                     "mt-1": label

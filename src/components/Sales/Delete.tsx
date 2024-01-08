@@ -10,15 +10,15 @@ type DeleteOrderProps = {
     mutate: (slug: string) => void;
 }
 
-export function DeleteSale({ slug, mutate }: DeleteOrderProps) {
+export function CancelSale({ slug, mutate }: DeleteOrderProps) {
     const [openModal, setOpenModal] = useState(false);
 
     const handleDeleteOrder = ((slug: string) => {
         mutate(slug);
-        Fetch.delete(`orders/${slug}`).then(() => {
-            toast.success("Pedido excluído com sucesso!");
+        Fetch.delete(`sales/${slug}`).then(() => {
+            toast.success("Venda cancelada com sucesso!");
         }).catch(() => {
-            toast.error("Ops! Não foi possível excluir o pedido. Tente novamente.");
+            toast.error("Ops! Não foi possível cancelar a venda. Tente novamente.");
         });
     });
 
@@ -33,8 +33,8 @@ export function DeleteSale({ slug, mutate }: DeleteOrderProps) {
             <ConfirmModal
                 isOpen={openModal}
                 onClose={() => setOpenModal(false)}
-                title="Excluir pedido?"
-                message="Tem certeza que deseja excluir este pedido? Essa ação não poderá ser desfeita."
+                title="Cancelar venda?"
+                message="Tem certeza que deseja cancelar esta venda? Essa ação não poderá ser desfeita."
                 type="error"
                 onConfirm={() => handleDeleteOrder(slug)}
             />

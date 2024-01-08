@@ -16,6 +16,8 @@ interface InputProps extends React.HTMLAttributes<HTMLInputElement> {
     required?: boolean;
     accept?: string;
     placeholder?: string;
+    min?: string | number;
+    max?: string | number;
 }
 
 const InputBase: ForwardRefRenderFunction<HTMLInputElement, InputProps> = ({ label, className, id, placeholder, error, maxLength, mask, required, ...rest }, ref) => {

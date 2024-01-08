@@ -1,4 +1,4 @@
-import { FloppyDiskBack, PlusCircle } from "@phosphor-icons/react";
+import { FloppyDiskBack, PlusCircle, TrashSimple } from "@phosphor-icons/react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Router from "next/router";
@@ -14,31 +14,32 @@ import { useFetch } from "@/hooks/useFetch";
 import { Loading } from "@/components/ui/Loading";
 
 type CreateSaleFormData = {
-    client_name: string,
-    payment_methods: string,
+    clientName: string,
+    paymentMethods: string,
     products: {
-        product_id: number,
+        productId: string,
         amount: number
     }[],
 }
 
-type Product = {
-    id: number;
-    name: string;
-    amount: number;
+type Inventory = {
+    id: number
+    name: string
+    amount: number
+    unitaryValue: number
+    totalValue: number
 }
 
 export default function CreateSale() {
+    const { data: products } = useFetch<Inventory[]>("/inventory");
     const { register, handleSubmit, formState, control } = useForm<CreateSaleFormData>();
-
-    const { fields, append, remove } = useFieldArray({
+    const { fields: productsFields, append: appendProducts, remove: removeProducts } = useFieldArray({
         control,
         name: "products",
     });
 
-    const { data: dataProducts } = useFetch<Product[]>("/products");
 
-    if (!dataProducts) {
+    if (!products) {
         return <Loading />;
     }
 
@@ -52,16 +53,18 @@ export default function CreateSale() {
     };
 
     function addProducts() {
-        append({product_id: 0, amount: 1 });
+        appendProducts({ productId: "", amount: 1 });
     }
 
     return (
         <>
             <Head title="Nova venda" />
 
-            <form onSubmit={handleSubmit(handleCreateSale)}>
+            <form
+                className="flex flex-col gap-4"
+                onSubmit={handleSubmit(handleCreateSale)}
+            >
                 <PageHeader
-                    className="mb-4"
                     title="Nova venda"
                     button={
                         <Button
@@ -76,10 +79,9 @@ export default function CreateSale() {
                     }
                     breadcrumb={[
                         { title: "Vendas", href: "/sales" },
-                        { title: "Criar venda" }
+                        { title: "Nova venda" }
                     ]}
                 />
-
 
                 <Card title="Dados da venda">
                     <div className="p-4">
@@ -89,23 +91,23 @@ export default function CreateSale() {
                                 id="client_name"
                                 type="text"
                                 className="mb-4"
-                                {...register("client_name", {
+                                {...register("clientName", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                error={formState.errors.client_name?.message}
+                                error={formState.errors.clientName?.message}
                             />
                             <Select
                                 label="Metodo de pagamento"
                                 id="payment_methods"
                                 className="mb-4"
-                                {...register("payment_methods", {
+                                {...register("paymentMethods", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                error={formState.errors.payment_methods?.message}
+                                error={formState.errors.paymentMethods?.message}
                             >
-                                <option value="Selecione">Selecione</option>
+                                <option value="">Selecione</option>
                                 <option value="Pix">Pix</option>
                                 <option value="Boleto">Boleto</option>
                                 <option value="Cartão">Cartão</option>
@@ -114,62 +116,74 @@ export default function CreateSale() {
                     </div>
                 </Card>
 
-                <Card title="Dados dos produtos" className="mt-7 pb-4">
-                
-                <Button
-                    onClick={addProducts}
-                    className="mx-4 mt-4"
-                    type="button"
-                    ariaLabel="Botão que salva o produto da venda"
-                    variant="secondary"
-                    icon={<PlusCircle size={24} />}
-                    isLoading={formState.isSubmitting}
-                >
-                    Adicionar
-                </Button>
-
-                {fields.map((field, index) => {
-                    return (
-                    <div
-                        key={field.id}
-                        className="p-4 grid grid-cols-2 gap-4"
-                    >
-                        <Select
-                            label="Produtos"
-                            id="product_id"
-                            className="mb-3"
-                            {...register(`products.${index}.product_id`, {
-                                required: "Campo obrigatório"
-                            })}
-                            required
-                            error={formState.errors.products?.[index]?.product_id?.message}
+                <Card className="p-4">
+                    <header className="flex items-center justify-between gap-4">
+                        <h2 className="text-2xl font-semibold">
+                            Dados dos produtos
+                        </h2>
+                        <Button
+                            onClick={addProducts}
+                            type="button"
+                            ariaLabel="Botão que salva o produto da venda"
+                            variant="secondary"
+                            icon={<PlusCircle size={24} />}
+                            isLoading={formState.isSubmitting}
                         >
-                            {!dataProducts ?
-                                <option value="Nada por aqui...">Nada por aqui...</option>
-                                : (
-                                    <>
-                                        <option value="Selecione">Selecione</option>
-                                        {dataProducts.map(product => (
-                                            <option key={product.id} value={product.id}>{product.name}</option>
-                                        ))}
-                                    </>
-                                )}
-                        </Select>
-
-                        <Input
-                        label="Quantidade"
-                        id="amount"
-                        type="number"
-                        className="mb-3"
-                        {...register(`products.${index}.amount`, {
-                            required: "Campo obrigatório"
+                            Adicionar
+                        </Button>
+                    </header>
+                    <main className="space-y-4">
+                        {productsFields.map((field, index) => {
+                            return (
+                                <div key={field.id} className="flex items-center gap-4">
+                                    <div className="flex-1 flex flex-col md:grid md:grid-cols-2 gap-4">
+                                        <Select
+                                            label="Produtos"
+                                            id="productId"
+                                            {...register(`products.${index}.productId`, {
+                                                required: "Campo obrigatório"
+                                            })}
+                                            required
+                                            error={formState.errors.products?.[index]?.productId?.message}
+                                        >
+                                            {!products ?
+                                                <option value="Nada por aqui...">Nada por aqui...</option>
+                                                : (
+                                                    <>
+                                                        <option value="">Selecione</option>
+                                                        {products.map(product => (
+                                                            <option key={product.id} value={product.id}>{product.name}</option>
+                                                        ))}
+                                                    </>
+                                                )}
+                                        </Select>
+                                        <Input
+                                            label="Quantidade"
+                                            id="amount"
+                                            type="number"
+                                            {...register(`products.${index}.amount`, {
+                                                required: "Campo obrigatório",
+                                                min: {
+                                                    value: 1,
+                                                    message: "A quantidade mínima é de 1"
+                                                }
+                                            })}
+                                            required
+                                            error={formState.errors.products?.[index]?.amount?.message}
+                                        />
+                                    </div>
+                                    <button
+                                        type="button"
+                                        aria-label="Botão de remover produto"
+                                        className="mt-5 flex items-center justify-center text-red-500"
+                                        onClick={() => removeProducts(index)}
+                                    >
+                                        <TrashSimple size={24} />
+                                    </button>
+                                </div>
+                            );
                         })}
-                        required
-                        error={formState.errors.products?.[index]?.amount?.message}
-                        />
-                    </div>
-                    );
-                })}            
+                    </main>
                 </Card>
             </form>
         </>

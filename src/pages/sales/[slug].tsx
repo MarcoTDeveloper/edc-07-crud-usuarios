@@ -1,116 +1,103 @@
 import { useEffect } from "react";
-import { FloppyDiskBack } from "@phosphor-icons/react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
-import Router from "next/router";
+import { useForm } from "react-hook-form";
 import { GetServerSideProps } from "next/types";
 import { getServerSession } from "next-auth/next";
 
-import { Button } from "@/components/ui/Button";
 import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 import { Loading } from "@/components/ui/Loading";
 import { useFetch } from "@/hooks/useFetch";
 import { Fetch } from "@/services/api";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { UserProps } from "@/contexts/AuthContext";
-import { moneyMask } from "@/hooks/useMoneyMask";
+import { NoData } from "@/components/ui/NoData";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { ProductsList } from "@/components/Sales/ProductsList";
 
-type UpdateProductProps = {
+type SaleProps = {
     slug: string;
 }
 
-type Product = {
+type Sales = {
     id: number;
-    name: string;
-    price: string;
+    user: string;
+    clientName: string;
+    paymentMethods: string;
+    products: {
+        id: number;
+        amount: string;
+        name: string;
+        price: string;
+        totalValue: string;
+    }[]
 }
 
-interface UpdateProductFormData extends Product { }
+type SaleFormData = {
+    id: number;
+    clientName: string;
+    paymentMethods: string;
+    products: {
+        productId: string;
+        amount: number
+    }[]
+}
 
-export default function UpdateProduct({ slug }: UpdateProductProps) {
-    const { data } = useFetch<Product>(`/products/${slug}`);
-    const { register, handleSubmit, formState, setValue, watch } = useForm<UpdateProductFormData>();
-    const watchUserName = watch("name");
+export default function UpdateProduct({ slug }: SaleProps) {
+    const { data, isLoading } = useFetch<Sales>(`/sales/${slug}`);
+    const { register, setValue } = useForm<SaleFormData>();
 
     useEffect(() => {
         if (data) {
             setValue("id", data.id);
-            setValue("name", data.name);
-            setValue("price", data.price);
+            setValue("clientName", data.clientName);
+            setValue("paymentMethods", data.paymentMethods);
         }
     }, [data, setValue]);
 
-    const handleUpdateProduct: SubmitHandler<UpdateProductFormData> = async (data) => {
-        Fetch.post("/products/update", data).then(() => {
-            toast.success("Produto atualizado com sucesso!");
-            Router.push("/products");
-        }).catch(() => {
-            toast.error("Erro ao atualizar produto!");
-        });
-    };
-
-    if (!data) {
+    if (!data || isLoading) {
         return <Loading />;
     }
 
     return (
         <>
-            <Head title="Sobre o produto" />
+            <Head title="Sobre a venda" />
 
+            <form
+                className="flex flex-col gap-4"
+            >
                 <PageHeader
-                    className="mb-4"
-                    title="Sobre o produto"
-                    button={
-                        <Button
-                            type="submit"
-                            ariaLabel="Botão que salva o produto"
-                            variant="secondary"
-                            icon={<FloppyDiskBack size={24} />}
-                            isLoading={formState.isSubmitting}
-                        >
-                            Salvar
-                        </Button>
-                    }
+                    title="Sobre a venda"
                     breadcrumb={[
-                        { title: "Produtos", href: "/products" },
-                        { title: watchUserName || "Editar Produto" }
+                        { title: "Vendas", href: "/sales" },
+                        { title: "Sobre a venda" }
                     ]}
                 />
 
-                <Card title="Dados do produto">
+                <Card title="Dados da venda">
                     <div className="p-4">
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                             <Input
-                                label="Nome"
-                                id="name"
-                                type="text"
+                                label="Código"
+                                id="id"
                                 className="mb-4"
-                                {...register("name", {
-                                    required: "Campo obrigatório"
-                                })}
-                                required
-                                error={formState.errors.name?.message}
+                                {...register("id")}
+                                disabled
                             />
                             <Input
-                                label="Preço"
-                                id="price"
-                                type="text"
+                                label="Nome do cliente"
+                                id="clientName"
                                 className="mb-4"
-                                {...register("price", {
-                                    required: "Campo obrigatório",
-                                    onChange(event) {
-                                        setValue("price", moneyMask(event.target.value));
-                                    },
-                                })}
-                                required
-                                error={formState.errors.price?.message}
+                                {...register("clientName")}
+                                disabled
                             />
                         </div>
                     </div>
                 </Card>
+                <ProductsList
+                    data={data.products}
+                />
+            </form>
         </>
     );
 }
@@ -128,10 +115,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     } else {
         const { user } = session?.user as { user: UserProps };
-        if (!user.permissions.includes("products.update")) {
+        if (!user.permissions.includes("sales.read")) {
             return {
                 redirect: {
-                    destination: "/products",
+                    destination: "/sales",
                     permanent: false
                 }
             };

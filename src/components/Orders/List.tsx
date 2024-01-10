@@ -33,7 +33,7 @@ export function OrdersList() {
     const columnHelper = createColumnHelper<Orders>();
     const columns = [
         columnHelper.accessor("id", {
-            header: "ID",
+            header: "Código",
             size: 5,
             cell: info => (
                 <div className="flex items-center justify-center">

@@ -20,7 +20,7 @@ export default function CreateProduct() {
     const { register, handleSubmit, formState, setValue } = useForm<CreateProductFormData>();
 
     const handleCreateProduct: SubmitHandler<CreateProductFormData> = async (data) => {
-        Fetch.post("/products/create", data).then(() => {
+        Fetch.post("/products", data).then(() => {
             toast.success("Produto criado com sucesso!");
             Router.push("/products");
         }).catch(() => {

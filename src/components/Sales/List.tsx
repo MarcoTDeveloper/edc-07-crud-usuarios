@@ -1,7 +1,7 @@
 import { useCallback, useContext } from "react";
 import Link from "next/link";
 import { createColumnHelper } from "@tanstack/react-table";
-import { Eye } from "@phosphor-icons/react";
+import { Eye, TrashSimple } from "@phosphor-icons/react";
 import { format } from "date-fns";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -10,6 +10,7 @@ import { CancelSale } from "./Delete";
 import { Loading } from "../ui/Loading";
 import { Table } from "../ui/Table";
 import { NoData } from "../ui/NoData";
+import classNames from "classnames";
 
 export type Sales = {
     id: number;
@@ -17,6 +18,7 @@ export type Sales = {
     paymentMethods: string;
     slug: string;
     status: boolean;
+    totalValue: string;
 }
 
 export function SalesList() {
@@ -34,7 +36,9 @@ export function SalesList() {
             header: "ID",
             size: 5,
             cell: info => (
-                <div className="flex items-center justify-center">
+                <div className={classNames("flex items-center justify-center", {
+                    "opacity-50": info.row.original.status == false
+                })}>
                     {info.renderValue()}
                 </div>
             ),
@@ -43,7 +47,9 @@ export function SalesList() {
             header: "Data",
             size: 10,
             cell: info => (
-                <div className="flex items-center justify-center">
+                <div className={classNames("flex items-center justify-center", {
+                    "opacity-50": info.row.original.status == false
+                })}>
                     {format(new Date(info.renderValue()!), "dd/LL/yyyy 'às' HH:mm")}
                 </div>
             ),
@@ -52,17 +58,29 @@ export function SalesList() {
             header: "Método de pagamento",
             size: 10,
             cell: info => (
-                <div className="flex items-center justify-center">
+                <div className={classNames("flex items-center justify-center", {
+                    "opacity-50": info.row.original.status == false
+                })}>
                     {info.renderValue()}
                 </div>
             ),
         }),
-
-        columnHelper.accessor("slug", {
-            header: "",
+        columnHelper.accessor("totalValue", {
+            header: "Valor Total (R$)",
             size: 10,
             cell: info => (
-                <div className="flex items-center gap-2 justify-end">
+                <div className={classNames("flex items-center justify-center", {
+                    "opacity-50": info.row.original.status == false
+                })}>
+                    {info.renderValue()}
+                </div>
+            ),
+        }),
+        columnHelper.accessor("slug", {
+            header: "",
+            size: 5,
+            cell: info => (
+                <div className="flex items-center gap-2 justify-center">
                     {info.row.original.status == true ? (
                         <>
                             {user?.permissions.includes("sales.read") && (
@@ -77,13 +95,10 @@ export function SalesList() {
                                 />
                             )}
                         </>) : (
-                        <>
-                            {user?.permissions.includes("sales.read") && (
-                                <Link href={`/sales/${info.renderValue()}`}>
-                                    <Eye size={24} />
-                                </Link>
-                            )}
-                        </>)}
+                        <Link href={`/sales/${info.renderValue()}`}>
+                            <Eye size={24} />
+                        </Link>
+                    )}
                 </div>
             ),
         })

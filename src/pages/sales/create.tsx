@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/Input";
 import { Fetch } from "@/services/api";
 import { Select } from "@/components/ui/Select";
 import { SelectProduct } from "@/components/Sales/SelectProduct";
+import { SelectedProductsTable } from "@/components/Sales/SelectedProductsTable";
 
 export type SelectedProducts = {
     productId: number;
@@ -23,22 +24,18 @@ export type SelectedProducts = {
     totalValue: string;
 }
 
-type CreateSaleFormData = {
+export type CreateSaleFormData = {
     clientName: string,
     paymentMethods: string,
-    products: {
-        productId: number;
-        amount: number;
-    }[],
+    products: SelectedProducts[],
 }
 
 export default function CreateSale() {
-    const { register, handleSubmit, formState, control, setValue } = useForm<CreateSaleFormData>();
-    const { fields: productsFields, remove: removeProducts } = useFieldArray({
+    const { register, handleSubmit, formState, control } = useForm<CreateSaleFormData>();
+    const { fields: productsFields, append: appendProducts, remove: removeProducts } = useFieldArray({
         control,
         name: "products",
     });
-    const [selectedProducts, setSelectedProducts] = useState<SelectedProducts[]>([]);
 
     const handleCreateSale: SubmitHandler<CreateSaleFormData> = async (data) => {
         Fetch.post("/sales", data).then(() => {
@@ -48,13 +45,6 @@ export default function CreateSale() {
             toast.error("Erro ao fazer a venda!");
         });
     };
-
-    useEffect(() => {
-        if (selectedProducts) {
-            setValue("products", selectedProducts);
-        }
-    },
-        [selectedProducts, setValue, productsFields]);
 
     return (
         <>
@@ -83,10 +73,8 @@ export default function CreateSale() {
                     ]}
                 />
                 <SelectProduct
-                    setSelectedProducts={data => setSelectedProducts(prev => ({
-                        ...prev,
-                        data
-                    }))}
+                    productsFields={productsFields}
+                    append={appendProducts}
                 />
                 <div className="flex flex-col md:grid md:grid-cols-10 md:items-start gap-4">
                     <Card className="p-4 col-span-8">
@@ -95,8 +83,8 @@ export default function CreateSale() {
                                 Produtos selecionados
                             </h2>
                         </header>
-                        <main className="space-y-4">
-                            {selectedProducts.length === 0 ?
+                        <main>
+                            {productsFields.length === 0 ?
                                 <div
                                     className="flex flex-col items-center gap-4 py-4 text-2xl font-semibold text-gray-500 "
                                 >
@@ -109,59 +97,10 @@ export default function CreateSale() {
                                     Nenhum produto adicionado
                                 </div>
                                 : (
-                                    <>
-                                        {productsFields.map((fields, index) => {
-                                            return (
-                                                <div key={fields.id} className="flex items-center gap-4">
-                                                    <div className="flex-1 flex flex-col md:grid md:grid-cols-11 gap-4">
-                                                        <Input
-                                                            id="amount"
-                                                            label="Quant."
-                                                            type="number"
-                                                            {...register(`products.${index}.amount`)}
-                                                            disabled
-                                                            className="col-span-2"
-                                                        />
-                                                        <Input
-                                                            id="productId"
-                                                            label="Produtos"
-                                                            type="text"
-                                                            value={`products.${index}.productId`}
-                                                            disabled
-                                                            className="col-span-5"
-                                                        >
-                                                        </Input>
-                                                        <Input
-                                                            id="productUnitValue"
-                                                            type="text"
-                                                            label="Valor Uni. (R$)"
-                                                            value={0}
-                                                            disabled
-                                                            className="md:col-span-2"
-                                                        />
-                                                        <Input
-                                                            id="productTotalValue"
-                                                            type="text"
-                                                            label="Valor Total (R$)"
-                                                            value={0}
-                                                            disabled
-                                                            className="md:col-span-2"
-                                                        />
-                                                    </div>
-                                                    <button
-                                                        type="button"
-                                                        aria-label="Botão de remover produto"
-                                                        className="mt-5 flex items-center justify-center text-red-500"
-                                                        onClick={() => { removeProducts(index); }}
-                                                    >
-                                                        <TrashSimple size={24} />
-                                                    </button>
-                                                </div>
-                                            );
-                                        })}
-
-                                        {JSON.stringify(selectedProducts)}
-                                    </>
+                                    <SelectedProductsTable
+                                        data={productsFields}
+                                        remove={removeProducts}
+                                    />
                                 )}
                         </main>
                     </Card>

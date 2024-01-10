@@ -7,7 +7,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { LinkButton } from "@/components/ui/LinkButton";
 import { OrdersList } from "@/components/Orders/List";
 
-export default function Users() {
+export default function Orders() {
   const { user } = useContext(AuthContext);
 
   return (

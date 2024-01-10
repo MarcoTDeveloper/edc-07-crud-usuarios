@@ -1,15 +1,15 @@
 import { PlusCircle } from "@phosphor-icons/react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldArrayWithId, SubmitHandler, UseFieldArrayAppend, useForm } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 import { useFetch } from "@/hooks/useFetch";
 import { Card } from "../ui/Card";
 import { Input } from "../ui/Input";
 import { Button } from "../ui/Button";
-import { SelectedProducts } from "@/pages/sales/create";
+import { CreateSaleFormData, SelectedProducts } from "@/pages/sales/create";
 import { NumberFormat } from "@/hooks/useNumberFormat";
 import { MoneyFormat } from "@/hooks/useMoneyFormat";
-import { toast } from "react-toastify";
 
 type Inventory = {
   id: number
@@ -20,10 +20,11 @@ type Inventory = {
 }
 
 type SelectProductProps = {
-  setSelectedProducts: (data: SelectedProducts) => void;
+  productsFields: FieldArrayWithId<CreateSaleFormData, "products", "id">[]
+  append: UseFieldArrayAppend<CreateSaleFormData, "products">;
 }
 
-export function SelectProduct({ setSelectedProducts }: SelectProductProps) {
+export function SelectProduct({ productsFields, append }: SelectProductProps) {
   const { data: products } = useFetch<Inventory[]>("/inventory");
   const { register, handleSubmit, formState, setValue, setError, getValues, watch, reset } = useForm<SelectedProducts>({
     defaultValues: {
@@ -33,7 +34,7 @@ export function SelectProduct({ setSelectedProducts }: SelectProductProps) {
     }
   });
   const [maxAmount, setMaxAmount] = useState<number>(0);
-  const watchAmount = watch("amount");
+  const watchAmount = Number(watch("amount"));
 
   const selectProduct = useCallback((productId: number) => {
     const selectedProduct = products?.find(product => product.id == productId);
@@ -49,15 +50,22 @@ export function SelectProduct({ setSelectedProducts }: SelectProductProps) {
 
   useEffect(() => {
     if (getValues("productId") != 0 && watchAmount > 0) {
-      if (maxAmount != 0 && watchAmount > maxAmount) {
+      let selectedAmount = productsFields.length > 0 ? productsFields.find(product => product.productId == getValues("productId"))?.amount || 0 : 0;
+      if (maxAmount != 0 && (watchAmount + selectedAmount) > maxAmount) {
         toast.error(`A quantidade informada é maior que a disponível no estoque (${maxAmount})`);
       }
       selectProduct(getValues("productId"));
     }
-  }, [getValues, selectProduct, maxAmount, setError, watchAmount]);
+  }, [getValues, selectProduct, maxAmount, setError, watchAmount, productsFields]);
 
   const handleSelectProduct: SubmitHandler<SelectedProducts> = (data) => {
-    setSelectedProducts(data);
+    let selectedAmount = productsFields.length > 0 ? productsFields.find(product => product.productId == data.productId)?.amount || 0 : 0;
+    if (maxAmount != 0 && (watchAmount + selectedAmount) > maxAmount) {
+      toast.error("Quantidade indisponível ou maior que a do estoque atual!");
+      return;
+    }
+
+    append(data);
     reset({
       amount: 1,
       productId: 0,
@@ -69,7 +77,7 @@ export function SelectProduct({ setSelectedProducts }: SelectProductProps) {
 
   return (
     <Card title="Produto">
-      <div className="flex flex-col md:grid md:grid-cols-12 md:items-end gap-4 p-4">
+      <div className="flex flex-col md:grid md:grid-cols-12 md:items-baseline gap-4 p-4">
         <Input
           id="productAmount"
           type="number"
@@ -128,7 +136,7 @@ export function SelectProduct({ setSelectedProducts }: SelectProductProps) {
         <Button
           onClick={handleSubmit(handleSelectProduct)}
           type="button"
-          className="mt-auto mx-auto md:col-span-1"
+          className="flex items-center justify-center line w-14 mx-auto mt-auto md:col-span-1"
           ariaLabel="Botão que adiciona produtos na tabela"
           icon={<PlusCircle size={24} />}
           variant="secondary"

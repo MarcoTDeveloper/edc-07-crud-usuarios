@@ -14,7 +14,7 @@ import { useFetch } from "@/hooks/useFetch";
 import { Loading } from "@/components/ui/Loading";
 
 type CreateOrderFormData = {
-    product_id: number,
+    productId: number,
     amount: number,
 }
 
@@ -43,7 +43,7 @@ export default function CreateOrder() {
 
     return (
         <>
-            <Head title="Novo produto" />
+            <Head title="Novo pedido" />
 
             <form onSubmit={handleSubmit(handleCreateOrder)}>
                 <PageHeader
@@ -72,13 +72,13 @@ export default function CreateOrder() {
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                             <Select
                                 label="Produtos"
-                                id="product_id"
+                                id="productId"
                                 className="mb-4"
-                                {...register("product_id", {
+                                {...register("productId", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                error={formState.errors.product_id?.message}
+                                error={formState.errors.productId?.message}
                             >
                                 {!dataProducts ?
                                     <option value="Nada por aqui...">Nada por aqui...</option>

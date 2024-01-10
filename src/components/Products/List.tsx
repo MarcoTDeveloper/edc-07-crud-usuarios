@@ -29,7 +29,7 @@ export function ProductsList() {
     const columnHelper = createColumnHelper<Products>();
     const columns = [
         columnHelper.accessor("id", {
-            header: "ID",
+            header: "Código",
             size: 5,
             cell: info => (
                 <div className="flex items-center justify-center">
@@ -41,11 +41,11 @@ export function ProductsList() {
             header: "Nome",
         }),
         columnHelper.accessor("price", {
-            header: "Preço",
+            header: "Preço (R$)",
             size: 10,
             cell: info => (
                 <div className="flex items-center justify-center">
-                    {new Intl.NumberFormat("pt-Br", { style: "currency", currency: "BRL" }).format(info.renderValue()!)}
+                    {info.renderValue()}
                 </div>
             ),
         }),

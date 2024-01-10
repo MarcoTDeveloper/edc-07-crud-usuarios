@@ -2,10 +2,6 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import { Card } from "../ui/Card";
 import { Table } from "../ui/Table";
-import { Eye } from "@phosphor-icons/react";
-import { format } from "date-fns";
-import Link from "next/link";
-import { CancelSale } from "./Delete";
 
 type Products = {
   id: number;
@@ -66,7 +62,7 @@ export function ProductsList({ data }: ProductsListProps) {
 
 
   return (
-    <Card title="Produtos">
+    <Card title="Produtos vendidos">
       <div className="p-4">
         <Table
           data={data}

@@ -2,8 +2,6 @@ import { useCallback, useContext } from "react";
 import Link from "next/link";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Eye } from "@phosphor-icons/react";
-
-import { AuthContext } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
 import { Loading } from "../ui/Loading";
 import { Table } from "../ui/Table";
@@ -13,8 +11,8 @@ export type Inventory = {
     id: number,
     name: string,
     amount: number,
-    unitary_value: number,
-    total_value: number,
+    unitaryValue: string,
+    totalValue: string,
 }
 
 export function InventoryList() {
@@ -43,21 +41,21 @@ export function InventoryList() {
                 </div>
             ),
         }),
-        columnHelper.accessor("unitary_value", {
-            header: "Valor Unitário",
+        columnHelper.accessor("unitaryValue", {
+            header: "Valor Uni. (R$)",
             size: 10,
             cell: info => (
                 <div className="flex items-center justify-center">
-                    {new Intl.NumberFormat("pt-Br", { style: "currency", currency: "BRL" }).format(info.renderValue()!)}
+                    {info.renderValue()}
                 </div>
             ),
         }),
-        columnHelper.accessor("total_value", {
-            header: "Valor Total",
+        columnHelper.accessor("totalValue", {
+            header: "Valor Total (R$)",
             size: 10,
             cell: info => (
                 <div className="flex items-center justify-center">
-                    {new Intl.NumberFormat("pt-Br", { style: "currency", currency: "BRL" }).format(info.renderValue()!)}
+                    {info.renderValue()}
                 </div>
             ),
         }),

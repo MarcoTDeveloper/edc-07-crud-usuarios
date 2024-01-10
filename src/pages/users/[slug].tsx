@@ -15,7 +15,7 @@ import { Select } from "@/components/ui/Select";
 import { CheckBox } from "@/components/ui/CheckBox";
 import { Hr } from "@/components/ui/Hr";
 import { Loading } from "@/components/ui/Loading";
-import { AuthContext, UserProps } from "@/contexts/AuthContext";
+import { UserProps } from "@/contexts/AuthContext";
 import { useFetch } from "@/hooks/useFetch";
 import { Collapse } from "@/components/ui/Collapse";
 import { Fetch } from "@/services/api";
@@ -204,11 +204,10 @@ export default function UpdateUser({ slug }: UpdateUserProps) {
                                         error={formState.errors.email?.message}
                                     />
                                 </div>
-                                <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
+                                <div className="flex flex-col gap-4 mb-4 md:grid md:grid-cols-2">
                                     <Select
                                         label="Status"
                                         id="status"
-                                        className="mb-4"
                                         {...register("status", {
                                             required: "Campo obrigatório"
                                         })}

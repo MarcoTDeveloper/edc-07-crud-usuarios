@@ -2,7 +2,7 @@ import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { InventoryList } from "@/components/Inventory/List";
 
-export default function Users() {
+export default function Inventory() {
 
   return (
     <>

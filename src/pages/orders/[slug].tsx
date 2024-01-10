@@ -29,7 +29,7 @@ type Product = {
 
 type Order = {
     id: number;
-    product_id: number;
+    productId: number;
     amount: number;
     product: Product;
 }
@@ -47,7 +47,7 @@ export default function UpdateOrder({ slug }: UpdateOrderProps) {
     useEffect(() => {
         if (data) {
             setValue("id", data.id);
-            setValue("product_id", data.product_id);
+            setValue("productId", data.productId);
             setValue("amount", data.amount);
         }
     }, [data, setValue]);
@@ -99,13 +99,13 @@ export default function UpdateOrder({ slug }: UpdateOrderProps) {
                         <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                             <Select
                                 label="Produtos"
-                                id="product_id"
+                                id="productId"
                                 className="mb-4"
-                                {...register("product_id", {
+                                {...register("productId", {
                                     required: "Campo obrigatório"
                                 })}
                                 required
-                                error={formState.errors.product_id?.message}
+                                error={formState.errors.productId?.message}
                             >
                                 {!dataProducts ?
                                     <option value="Nada por aqui...">Nada por aqui...</option>

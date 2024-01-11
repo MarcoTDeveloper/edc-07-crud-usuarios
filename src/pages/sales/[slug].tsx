@@ -7,10 +7,8 @@ import { Head } from "@/components/ui/Head";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Loading } from "@/components/ui/Loading";
 import { useFetch } from "@/hooks/useFetch";
-import { Fetch } from "@/services/api";
 import { authOptions } from "../api/auth/[...nextauth]";
 import { UserProps } from "@/contexts/AuthContext";
-import { NoData } from "@/components/ui/NoData";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { ProductsList } from "@/components/Sales/ProductsList";
@@ -43,13 +41,15 @@ type SaleFormData = {
     totalValue: string;
     products: {
         productId: string;
-        amount: number
+        amount: number;
     }[]
 }
 
 export default function UpdateProduct({ slug }: SaleProps) {
     const { data, isLoading } = useFetch<Sales>(`/sales/${slug}`);
     const { register, setValue } = useForm<SaleFormData>();
+
+    console.log(data);
 
     useEffect(() => {
         if (data) {

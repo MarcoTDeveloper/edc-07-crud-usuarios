@@ -51,7 +51,6 @@ export function SelectProduct({ productsFields, append }: SelectProductProps) {
   useEffect(() => {
     if (getValues("productId") != 0 && watchAmount > 0) {
       let selectedAmount = Number(productsFields.length > 0 ? productsFields.find(product => product.productId == getValues("productId"))?.amount || 0 : 0);
-      console.table([selectedAmount, maxAmount, watchAmount]);
       if (maxAmount != 0 && (watchAmount + selectedAmount) > maxAmount) {
         toast.error(`A quantidade informada é maior que a disponível no estoque (${maxAmount})`);
       }
@@ -114,8 +113,11 @@ export function SelectProduct({ productsFields, append }: SelectProductProps) {
           list="inventoryList"
         />
         <datalist id="inventoryList">
-          {products?.map(product => (
-            <option key={product.id} value={`${product.id} - ${product.name}`} />
+          {products?.filter(product => product.amount > 0).map(product => (
+            <option
+              key={product.id}
+              value={`${product.id} - ${product.name}`}
+            />
           ))}
         </datalist>
         <Input

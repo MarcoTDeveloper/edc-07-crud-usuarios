@@ -16,7 +16,6 @@ type ProductsListProps = {
 }
 
 export function ProductsList({ data }: ProductsListProps) {
-
   const columnHelper = createColumnHelper<Products>();
   const columns = [
     columnHelper.accessor("id", {

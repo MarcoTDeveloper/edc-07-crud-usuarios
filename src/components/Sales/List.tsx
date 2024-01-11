@@ -33,7 +33,7 @@ export function SalesList() {
     const columnHelper = createColumnHelper<Sales>();
     const columns = [
         columnHelper.accessor("id", {
-            header: "ID",
+            header: "Código",
             size: 5,
             cell: info => (
                 <div className={classNames("flex items-center justify-center", {

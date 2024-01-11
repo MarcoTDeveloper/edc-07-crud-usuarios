@@ -21,7 +21,7 @@ export function InventoryList() {
     const columnHelper = createColumnHelper<Inventory>();
     const columns = [
         columnHelper.accessor("id", {
-            header: "ID",
+            header: "Código",
             size: 5,
             cell: info => (
                 <div className="flex items-center justify-center">

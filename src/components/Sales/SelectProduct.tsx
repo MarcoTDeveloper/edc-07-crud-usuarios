@@ -50,7 +50,8 @@ export function SelectProduct({ productsFields, append }: SelectProductProps) {
 
   useEffect(() => {
     if (getValues("productId") != 0 && watchAmount > 0) {
-      let selectedAmount = productsFields.length > 0 ? productsFields.find(product => product.productId == getValues("productId"))?.amount || 0 : 0;
+      let selectedAmount = Number(productsFields.length > 0 ? productsFields.find(product => product.productId == getValues("productId"))?.amount || 0 : 0);
+      console.table([selectedAmount, maxAmount, watchAmount]);
       if (maxAmount != 0 && (watchAmount + selectedAmount) > maxAmount) {
         toast.error(`A quantidade informada é maior que a disponível no estoque (${maxAmount})`);
       }
@@ -59,7 +60,7 @@ export function SelectProduct({ productsFields, append }: SelectProductProps) {
   }, [getValues, selectProduct, maxAmount, setError, watchAmount, productsFields]);
 
   const handleSelectProduct: SubmitHandler<SelectedProducts> = (data) => {
-    let selectedAmount = productsFields.length > 0 ? productsFields.find(product => product.productId == data.productId)?.amount || 0 : 0;
+    let selectedAmount = Number(productsFields.length > 0 ? productsFields.find(product => product.productId == data.productId)?.amount || 0 : 0);
     if (maxAmount != 0 && (watchAmount + selectedAmount) > maxAmount) {
       toast.error("Quantidade indisponível ou maior que a do estoque atual!");
       return;

@@ -47,7 +47,7 @@ export function SelectedProductsTable({ data, remove }: SelectedProductsTablePro
       header: "",
       size: 5,
       cell: info => {
-        const productIndex = data.findIndex(product => product.productId == info.row.original.productId);
+        const productIndex = data.findIndex(product => product.id == info.row.original.id);
         return (
           <div className="flex items-center justify-center">
             <button

@@ -17,6 +17,7 @@ import { SelectProduct } from "@/components/Sales/SelectProduct";
 import { SelectedProductsTable } from "@/components/Sales/SelectedProductsTable";
 
 export type SelectedProducts = {
+    id?: string;
     productId: number;
     amount: number;
     description: string;
@@ -38,6 +39,10 @@ export default function CreateSale() {
     });
 
     const handleCreateSale: SubmitHandler<CreateSaleFormData> = async (data) => {
+        if (productsFields.length === 0) {
+            toast.warning("É necessário adicionar pelo menos um produto pra efetuar uma venda!");
+            return;
+        }
         Fetch.post("/sales", data).then(() => {
             toast.success("Venda feita com sucesso!");
             Router.push("/sales");

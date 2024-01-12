@@ -22,9 +22,10 @@ type Inventory = {
 type SelectProductProps = {
   productsFields: FieldArrayWithId<CreateSaleFormData, "products", "id">[]
   append: UseFieldArrayAppend<CreateSaleFormData, "products">;
+  productAdded: () => void;
 }
 
-export function SelectProduct({ productsFields, append }: SelectProductProps) {
+export function SelectProduct({ productsFields, append, productAdded }: SelectProductProps) {
   const { data: products } = useFetch<Inventory[]>("/inventory");
   const { register, handleSubmit, formState, setValue, setError, getValues, watch, reset } = useForm<SelectedProducts>({
     defaultValues: {
@@ -64,7 +65,6 @@ export function SelectProduct({ productsFields, append }: SelectProductProps) {
       toast.error("Quantidade indisponível ou maior que a do estoque atual!");
       return;
     }
-
     append(data);
     reset({
       amount: 1,
@@ -73,6 +73,7 @@ export function SelectProduct({ productsFields, append }: SelectProductProps) {
       totalValue: "0,00",
       uniValue: "0,00"
     });
+    productAdded();
   };
 
   return (

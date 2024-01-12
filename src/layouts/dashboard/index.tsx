@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 
-import { Aside } from "@/components/Aside";
-import { Main } from "@/components/Main";
+import { Aside } from "@/components/ui/Aside";
+import { Main } from "@/components/ui/Main";
 
 import { DashProvider } from "@/contexts/DashContext";
 import { ThemeContext } from "@/contexts/ThemeContext";

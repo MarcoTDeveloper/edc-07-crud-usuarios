@@ -1,7 +1,7 @@
 import Image from "next/image";
 import dynamic from "next/dynamic";
 
-const Logo = dynamic(() => import("../../Logo").then((mod) => mod.Logo), {
+const Logo = dynamic(() => import("../../../Logo").then((mod) => mod.Logo), {
     ssr: false,
 });
 

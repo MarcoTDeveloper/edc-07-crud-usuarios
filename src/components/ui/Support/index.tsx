@@ -1,25 +1,18 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import getConfig from "next/config";
-import { Heart, Info, Question, WhatsappLogo, X } from "@phosphor-icons/react";
+import { Heart, Info, Question, X } from "@phosphor-icons/react";
 import { Player } from "@lottiefiles/react-lottie-player";
-import classNames from "classnames";
 
-import { AsideButton } from "@/components/Aside/AsideMain/AsideButton";
-import { AuthContext } from "@/contexts/AuthContext";
+import { AsideButton } from "@/components/ui/Aside/AsideMain/AsideButton";
 import { SharpIcon } from "./SharpIcon";
 import { Modal } from "../Modal";
 import { AButton } from "../AButton";
-import { Tabs } from "../Tabs";
-import { Button } from "../Button";
 
 import supportAnimation from "@/assets/images/support.json";
-import phoneConnectedAnimation from "@/assets/images/phone_connected.json";
 
 export function Support() {
-    const { user } = useContext(AuthContext);
     const { publicRuntimeConfig } = getConfig();
     const [showSupportModal, setShowSupportModal] = useState<boolean>(false);
-    const [selectedTab, setSelectedTab] = useState<string>("whatsapp");
 
     return (
         <>

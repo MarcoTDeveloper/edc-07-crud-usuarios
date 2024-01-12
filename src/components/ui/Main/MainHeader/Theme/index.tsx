@@ -1,7 +1,7 @@
 import { Moon, Sun } from "@phosphor-icons/react";
 import { useContext, useState } from "react";
 
-import { ThemeContext } from "../../../../contexts/ThemeContext";
+import { ThemeContext } from "@/contexts/ThemeContext";
 import { ThemeOption } from "./ThemeOption";
 
 export function Theme() {

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { FloppyDiskBack, TrashSimple } from "@phosphor-icons/react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+import { FloppyDiskBack } from "@phosphor-icons/react";
 import { SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import Image from "next/image";
@@ -32,18 +33,33 @@ export type CreateSaleFormData = {
 }
 
 export default function CreateSale() {
-    const { register, handleSubmit, formState, control } = useForm<CreateSaleFormData>();
+    const { register, handleSubmit, formState, control, watch, setValue } = useForm<CreateSaleFormData>();
     const { fields: productsFields, append: appendProducts, remove: removeProducts } = useFieldArray({
         control,
         name: "products",
     });
 
+    useEffect(() => {
+        if (localStorage.getItem("salesData")) {
+            const data = JSON.parse(localStorage.getItem("salesData") as string) as CreateSaleFormData;
+            setValue("clientName", data.clientName);
+            setValue("paymentMethods", data.paymentMethods);
+            setValue("products", data.products);
+        }
+    }, []);
+
+    const handleSaveSaleState = () => {
+        const watchValues = watch();
+        localStorage.setItem("salesData", JSON.stringify(watchValues));
+    };
+
     const handleCreateSale: SubmitHandler<CreateSaleFormData> = async (data) => {
         if (productsFields.length === 0) {
-            toast.warning("É necessário adicionar pelo menos um produto pra efetuar uma venda!");
+            toast.warning("É necessário adicionar pelo menos um produto para efetuar uma venda!");
             return;
         }
         Fetch.post("/sales", data).then(() => {
+            localStorage.removeItem("salesData");
             toast.success("Venda feita com sucesso!");
             Router.push("/sales");
         }).catch(() => {
@@ -80,6 +96,7 @@ export default function CreateSale() {
                 <SelectProduct
                     productsFields={productsFields}
                     append={appendProducts}
+                    productAdded={handleSaveSaleState}
                 />
                 <div className="flex flex-col md:grid md:grid-cols-10 md:items-start gap-4">
                     <Card className="p-4 col-span-8">
@@ -117,21 +134,23 @@ export default function CreateSale() {
                             <div className="flex flex-col gap-4">
                                 <Input
                                     label="Cliente"
-                                    id="client_name"
+                                    id="clientName"
                                     type="text"
                                     className="mb-4"
                                     {...register("clientName", {
-                                        required: "Campo obrigatório"
+                                        required: "Campo obrigatório",
+                                        onChange: () => handleSaveSaleState()
                                     })}
                                     required
                                     error={formState.errors.clientName?.message}
                                 />
                                 <Select
-                                    label="Metodo de pagamento"
-                                    id="payment_methods"
+                                    label="Método de pagamento"
+                                    id="paymentMethods"
                                     className="mb-4"
                                     {...register("paymentMethods", {
-                                        required: "Campo obrigatório"
+                                        required: "Campo obrigatório",
+                                        onChange: () => handleSaveSaleState()
                                     })}
                                     required
                                     error={formState.errors.paymentMethods?.message}

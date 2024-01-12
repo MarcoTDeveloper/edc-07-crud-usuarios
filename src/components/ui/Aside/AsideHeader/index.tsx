@@ -6,11 +6,11 @@ import { ArrowLeft } from "@phosphor-icons/react";
 import { DashContext } from "@/contexts/DashContext";
 import { SantasHat } from "./SantasHat";
 
-const Logo = dynamic(() => import("../../Logo").then((mod) => mod.Logo), {
+const Logo = dynamic(() => import("../../../Logo").then((mod) => mod.Logo), {
     ssr: false,
 });
 
-const BrandName = dynamic(() => import("../../BrandName").then((mod) => mod.BrandName), {
+const BrandName = dynamic(() => import("../../../BrandName").then((mod) => mod.BrandName), {
     ssr: false,
 });
 
